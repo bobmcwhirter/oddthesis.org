@@ -1,0 +1,16 @@
+---
+title: "JBoss Microcontainer enables the good sort of evil"
+author: Bob McWhirter
+layout: post
+---
+<p>I've decided to rework the web-services deployer for JBoss-Rails to try wielding Apache-CXF directly.&nbsp; The goal is to make configuration even easier.&nbsp; With JBossWS, it still expected a META-INF/ directory containing your WS-Security configuration file.&nbsp; In XML.</p>
+<p>And we know that's not awesome for Rails folks.</p>
+<p>But, during the process of playing with CXF, I found that some of its interceptors are slightly incompatible with the JBoss SOAP DOM implementation.&nbsp; After spending a day recompiling both CXF and the JBoss DOM bits, I finally located the bug, in CXF's StaxUtils class.</p>
+<p>I <a title="CXF-2033" href="https://issues.apache.org/jira/browse/CXF-2033">filed my report in the CXF JIRA</a>, but I don't want to wait around for another release.&nbsp; I also don't want to mangle the CXF jars I'm getting from the Maven repository or the JBoss DOM classes I get from the app-server.</p>
+<p>The quick solution seemed to be replicating the StaxUtils class, with my bugfix, into my own source-tree, and getting it in front of the "official" class located in the CXF jar.</p>
+<p>Firing up the JBoss-Rails deployer with my patched class still resulted in failure.&nbsp; It appears that the jars inside the deployer are loaded alphabetically, perhaps.&nbsp; CXF vs JBoss, it's hard to get my class in front.</p>
+<p>As we've talked previously about structure deployers, and how they help Microcontainer recognize the shape and layout of some thing you deploy.&nbsp; They figure out where to look for classes, and where to look for meta-data.</p>
+<p>MC also supports a <a title="JBossMC declared structure" href="http://www.jboss.org/files/jbossmc/docs/2.0.x/userGuide/ch21s04.html">declared-structure</a> concept.&nbsp; The thing-being-deployed tells MC all of this structure information, through a <strong>jboss-structure.xml</strong> file.&nbsp; Using this facility within the JBoss-Rails deployer, I have more control over the jar search order:</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />&lt;structure&gt;<br />    &lt;context&gt;<br />        &lt;path name=""/&gt;<br />        &lt;metaDataPath&gt;<br />            &lt;path name="META-INF"/&gt;<br />        &lt;/metaDataPath&gt;<br />        &lt;classpath&gt;<br />            &lt;path name="lib/jboss-rails.jar"/&gt;<br />            &lt;path name="lib/" suffixes=".jar" /&gt;<br />        &lt;/classpath&gt;<br />    &lt;/context&gt;<br />&lt;/structure&gt;</pre>
+<p>This file says that starting from the top of the deployer's own archive, <strong>META-INF/</strong> is for meta-data, and the classpath should include the jboss-rails.jar <strong>first</strong>, <strong>then</strong> everything else with a <strong>.jar</strong> extension.</p>
+<p>Once again, Microcontainer saves the day with a handful of metadata.</p>

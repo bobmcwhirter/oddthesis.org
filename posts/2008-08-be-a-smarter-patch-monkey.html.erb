@@ -1,0 +1,42 @@
+---
+title: "Be a smarter patch monkey"
+author: Bob McWhirter
+layout: post
+---
+<p>A project I&#8217;m working on requires some hard-core monkey-patching of Rails internals.</p>
+<p>Monkey-patching is a dangerous occupation, and liable to cause new and intriguing bugs into previously-tested sane code.</p>
+<p>I&#8217;ve been working on a smarter patch-monkey, known as <a title="Lemur: The smarter patch monkey" href="http://github.com/bobmcwhirter/lemur/tree/master">Lemur</a>.</p>
+<p>The goal is to allow monkey-patched methods (currently only instance methods are supported) to be written in modules that are mixed in (as modules are) but allowing redefinition of methods in the patchee by the patcher module.</p>
+<p>I may be ignorant of some Ruby to make it happen, but I&#8217;ve resorted to <strong>alias_method</strong> and <strong>remove_method</strong>, along with a handful of Ruby&#8217;s reflection methods to swap methods in a reasonable, clean, and auditable fashion.</p>
+<p>The specs demonstrate how it works.  Assume a basic class:</p>
+<pre><code>
+class BasicClass
+  def some_instance_method()
+    # ...
+  end
+end
+</code></pre>
+<p>And a module to monkey-patch it</p>
+<pre><code>
+module PatchModule
+  def some_instance_method()
+    # ...
+  end
+end</code></pre>
+<p>Normally, Ruby will prefer a locally-defined method over a module mix-in, so you can&#8217;t just <strong>include</strong> your patch module in, even using <strong>class_eval</strong>.</p>
+<p>So, invite in the Lemur.</p>
+<pre><code>
+Lemur.patch_class(BasicClass, PatchModule)
+</code></pre>
+<p>And voila!  Your class is monkey-patched by the nicely self-contained module,  plus, it&#8217;s tracked.</p>
+<pre><code>
+Lemur.patched_classes # [ BasicClass ]
+</code></pre>
+<p>And even more cool, you can get some patch-audit information for each patched class:</p>
+<pre><code>
+Lemur.patch_records( BasicClass ) # [ array of PatchRecords ]
+</code></pre>
+<p>Each PatchRecord keeps up with the patched class, the patched method name, the actual replaced Method object, along with the patch module and the patch method.</p>
+<p>A total of 40min has been spent writing the code so far.  The idea is to add better auditability, <strong>unpatching</strong>, and dealing with class methods, not just instance methods.</p>
+<p>Now, when you encounter a weird bug, you can ask the Lemur where the oddness might&#8217;ve originated.</p>
+<p>Want to pitch in and do some meta-programming to make future meta-programming less scary, <a href="http://github.com/bobmcwhirter/lemur/tree/master">fork my git repository</a> and send me some pull requests.</p>

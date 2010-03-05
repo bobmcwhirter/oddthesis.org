@@ -1,0 +1,5 @@
+tmp
+*.swp
+_site
+_tmp
+.sass-cache

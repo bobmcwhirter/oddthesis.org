@@ -1,0 +1,18 @@
+---
+title: "Status Update: Rails &amp; Cloud"
+author: Bob McWhirter
+layout: post
+---
+<p>Since I haven't shipped any bits lately, I figured it was time to at least talk about what I've been doing lately.&nbsp; (Sacha, are you reading?)</p>
+<p>Things that did not involve code include the <a title="Interview on DZone" href="/posts/2009-02-interview-about-rails-cloud">interview on DZone</a> and <a title="Odd hire" href="/posts/2009-02-another-head-in-the-clouds">bringing Marek on board</a>.</p>
+<p>Things that do involve code have been interesting also...</p>
+<h3>Ruby and JAX-WS<br /></h3>
+<p>I like the EC2 API, at least as it is expressed through the command-line tools.&nbsp; On the other-hand, the wire protocol does not elicit joy.&nbsp; I'm normally a fan of <a title="Bill Burke on REST" href="http://java.dzone.com/articles/intro-rest">RESTful</a> protocols, but EC2, well, is not.</p>
+<p>And since my goal is to make oVirt appear like an EC2 cloud, I'm stuck with implementing the EC2 SOAP API.&nbsp; With WS-Security bits.&nbsp; Involving X.509 certificates.</p>
+<p>Every time I've looked at the SOAP implementations for Ruby, they seemed lacking.&nbsp; Particularly once you start involving all the security bits and crypto.&nbsp; But <a title="JBossWS" href="http://www.jboss.org/jbossws/">JBossWS</a> is pretty nice and fancy, supports certificates, message-signing and all that good stuff.&nbsp; Just adjust a few settings and your API is secure.&nbsp; Just like EC2.</p>
+<p>So far, I've gotten a <strong>@WebService</strong> that can be backed by Ruby classes.&nbsp; But that involves some <strong>wsdl2java</strong>, compilation on the Java side, etc.&nbsp; Now I'm looking into <strong>@WebServiceProvider</strong>, which takes a slightly more dynamic approach.&nbsp; I may end up having to jack in even lower to stand up classes from your RoR app as JAX-WS handlers, though.&nbsp; But we'll get there.&nbsp; And ideally, without touching the Java compiler from within your Rails app.&nbsp; I'm glad to have the <a title="Tag: deployers" href="/tags/deployers">deployers</a> framework in <a title="JBossMC" href="http://www.jboss.org/jbossmc/">Microcontainer</a>.</p>
+<p>Also, thanks to <a title="dmlloyd's blog" href="http://dmlloyd.blogspot.com/">David M. Lloyd</a> for helping me understand BER-encoding and other magic involving OpenSSH RSA keypairs.</p>
+<p>Ongoing...</p>
+<h3>Is that an appliance in your pocket?</h3>
+<p>All of this talk about clouds is awesome.&nbsp; But it's just an assembly of disk images (or "appliances") ultimately.&nbsp; USB sticks have a pretty good capacity these days, and appliance images can be somewhat small-ish.&nbsp; I've been talking to <a title="JBossTools blog" href="http://jbosstools.blogspot.com/">Max Andersen</a> of the <a title="JBossTools" href="http://www.jboss.org/tools/">JBossTools</a> project, about having a bootable, ready-to-go JBossTools-based appliance on a USB stick.&nbsp; Fedora, OpenJDK, Eclipse, JBoss Tools.&nbsp; Plug, boot, go.</p>
+<p>Also ongoing...</p>

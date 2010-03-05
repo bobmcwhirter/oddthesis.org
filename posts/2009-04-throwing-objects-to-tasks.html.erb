@@ -1,0 +1,19 @@
+---
+title: "Throwing objects to tasks"
+author: Bob McWhirter
+layout: post
+---
+<p>I recently introduced the <a title="Async task queues" href="/posts/2009-03-async-task-queues-ruby-meets-jms"><strong>async task queue</strong></a> functionality of JBoss-Rails.&nbsp; This is where we wire up JMS queues with Ruby handlers from your app.</p>
+<p>But what about the client side?&nbsp; How does code outside of the app-server communicate over the queue to the running handler?</p>
+<p>Like this stand-alone <strong>*.rb</strong> script:</p>
+<pre>#!/usr/bin/env jruby <br /><br />require RAILS_ROOT + '/client/boot'<br /><br />JBoss::Client.connect( "oddthesis", "localhost", 1099 ) do |client|<br />  MailerQueue.enqueue( :send_welcome_mail, <br />                       :user=&gt;User.find( :first ) )<br />end<br /></pre>
+<p>That's it.&nbsp; The JBoss-Rails Support plugin sets up <strong>RAILS_ROOT/client/</strong> for you, which includes the handy-dandy <strong>boot.rb</strong> along with every Java jar that you need to speak JRuby-on-Rails.</p>
+<p>So, we require the boot.rb, which sets up the Rails environment along with all the extra JBoss goodness.&nbsp; And then you're ready to write a client.</p>
+<p><strong>JBoss::Client.connect(...)</strong> is used to connect a client to a running JBoss.&nbsp; Ultimately, this just points to the JNDI service and includes an application name.&nbsp; This is because a lot of apps could be registered with the same naming context.&nbsp; And that context could be located on some other machinery.</p>
+<p>The <strong>connect(...)</strong> method takes a block, which is where you do your client operations.&nbsp; Here, we're sending a task to the MailerQueuer, exactly the same as we would from with a Controller or other code inside the AS.</p>
+<p>Here our client is just plucking the first User object it finds in the database, and tossing it to the <strong>send_welcome_mail</strong> task on the <strong>MailerQueue</strong>.&nbsp;</p>
+<p><em>In 5 lines of code.</em></p>
+<p>And yes, <strong>you can toss ActiveRecord objects across the queue</strong>.&nbsp; Let's look at a handler on the far side:</p>
+<pre>class MailerQueue &lt; JBoss::Queues::BaseQueue<br /><br />  def send_welcome_mail(payload)<br />    user = payload[:user]<br />    deliver_email( user.email_address )<br />    user.welcomed_at = Time.now<br />    user.save!<br />  end<br /><br />end<br /></pre>
+<p>The handler, running in a completely separate process (within the AS) has a live AR object it can inspect, update, or destroy.</p>
+<p>Not too shabby for a week's work.</p>

@@ -1,0 +1,26 @@
+---
+title: "JBoss-Rails 1.0 Beta 2 Released"
+author: Bob McWhirter
+layout: post
+---
+<p>The second beta of <a title="JBoss-Rails project" href="/theses/jboss-rails/projects/jboss-rails">JBoss-Rails</a> is now available.&nbsp; This release brings about a handful of visible changes:</p>
+<ul>
+<li><a title="*-rails.yml" href="/theses/jboss-rails/projects/jboss-rails/pages/x-rails-yml">*-rails.yml</a> now supports mapping to a virtual host</li>
+<li><a title="jboss-scheduler.yml" href="/theses/jboss-rails/projects/jboss-rails/pages/jboss-scheduler-yml">jboss-scheduler.yml</a> for recurring scheduled tasks</li>
+<li><a title="jboss-rails-env.yml" href="/theses/jboss-rails/projects/jboss-rails/pages/jboss-rails-env-yml">jboss-rails-env.yml</a> for setting RAILS_ENV if you don't use *-rails.yml</li>
+<li><a title="jboss-web.yml" href="/theses/jboss-rails/projects/jboss-rails/pages/jboss-web-yml">jboss-web.yml</a> for setting web config if you don't use *-rails.yml</li>
+<li><strong>lib/java/**.jar</strong> loaded into your classpath</li>
+<li><strong>lib/java/classes/</strong> loaded into your classpath</li>
+</ul>
+<p>The extra <strong>jboss-rails-env.yml</strong> and <strong>jboss-web.yml</strong> files allow you to simply symlink your application into your <strong>deploy/</strong> directory, if you so choose.&nbsp; Ultimately, it'll support deployment of Rails applications bundled into a JAR archive, without using <strong>*-rails.yml</strong>.&nbsp; But we're <strong>not yet</strong> able to deploy archives.</p>
+<p>Plus a whole bunch of clean-ups, refactorings, and better following of Microcontainer's best practices.</p>
+<h3>Obtain the release</h3>
+<p>If you just want to drop the JBoss-Rails deployer into your existing AS 5.0.x, you can grab the simple deployer distribution:</p>
+<ul>
+<li><a title="jboss-rails-deployer-1.0.0-beta-2.zip" href="http://repo.oddthesis.org/deployers/jboss-rails-deployer-1.0.0-beta-2.zip">jboss-rails-deployer-1.0.0-beta-2.zip</a></li>
+</ul>
+<p>If you don't have an AS 5.0.x already handy, this a bundle of AS 5.0.x from the latest nightly build, plus the JBoss-Rails deployer installed in the 'all' and 'default' configurations:</p>
+<ul>
+<li><a title="jboss-5.0.x-rails-1.0.0-beta-2.zip" href="http://repo.oddthesis.org/bundles/jboss-5.0.x-rails-1.0.0-beta-2.zip">jboss-5.0.x-rails-1.0.0-beta-2.zip</a></li>
+</ul>
+<p>Just unzip it, set <strong>$JBOSS_HOME</strong>, and you should be good to go.</p>

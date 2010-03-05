@@ -1,0 +1,30 @@
+---
+title: "Deployers in JBoss Microcontainer"
+author: Bob McWhirter
+layout: post
+---
+<p>In order to deploy a Rails app, I&#8217;ve had to learn the innards of Microcontainer&#8217;s deployer framework.  After a few wrong turns, I feel like I&#8217;ve finally gotten a handle on it.</p>
+<p>While we&#8217;re all used to dropping in an .ear or a .war, and might think in terms of deploying these archive formats, that&#8217;s ultimately one step removed from true deployment through MC.</p>
+<p>Within MC, when you deploy a .war or an exploded WAR directory, the first step is something recognizes that the chunk you&#8217;re deploying is roughly shaped like a WAR.  I&#8217;ll address that phase of deployment in a future post.</p>
+<p>Knowing that the deployment is a WAR also tells MC to look in WEB-INF/ for meta-data descriptors, such as <strong>web.xml</strong> and <strong>jboss-web.xml</strong>.  This is where true deployment of components starts.  Deployment runs through a series of stages, with deployers setup to match particular files and stages, doing the right things at the right time.</p>
+<p>One of the earliest stages is the <strong>PARSE</strong> stage.  A deployer can be bound to this stage to be given an early chance to match, parse, and act upon any meta-data file.  For normal WAR deployment, the <strong>WebAppParsingDeployer</strong> does exactly that.  There&#8217;s a nice hierarchy of classes to make parsing XML descriptors such as web.xml super simple.</p>
+<p>The <strong>WebAppParsingDeployer</strong> is the bridge from a web.xml file sitting on the filesystem or in an archive to the <strong>MetaData</strong> deployment bits. The parser reads web.xml, and produces a <strong>WebMetaData</strong> object associated with the deployment.  The <strong>WebMetaData</strong> is simply a nice object-tree representing anything you can denote in web.xml.</p>
+<p>We also might have a jboss-web.xml meta-data in our WAR, and that is parsed during the <strong>PARSE</strong> stage by the <strong>JBossWebAppParsingDeployer</strong>.  This deployer, like the previous, reads the XML file and creates, in this case, a <strong>JBossWebMetaData</strong> object.</p>
+<p>Once we&#8217;ve parsed these .xml files, the container has enough information to build up the classpath for the component.  Some of these deployers have also thrown off or modified some <strong>ClassLoadingMetaData</strong>, which describe paths that should be added to the classpath.</p>
+<p>As the container enters the <strong>CLASSLOADER</strong> stage of deployment, other magic occurs to actually set up the classpath.</p>
+<p>In the end, it&#8217;s the <strong>JBossWebMetaData</strong> that drives the ultimate deployment, but what if we don&#8217;t have a jboss-web.xml?  That&#8217;s where the <strong>MergedJBossWebMetaDataDeployer</strong> comes in.  It looks for a <strong>WebMetaData</strong>, and a <strong>JBossWebMetaData</strong> if one has been parsed, and merges them into a singular <strong>JBossWebMetaData</strong>.  I think it also mixes in any defaults that you have set for server-wide settings.</p>
+<p>Additionally, as jboss-web.xml is parsed by <strong>JBossWebAppParsingDeployer</strong>, it will perform the merge itself.  Additionally, magic is occuring to merge any annotation-based meta-data.</p>
+<p>I&#8217;m a little fuzzy on the ins and outs of the <strong>CLASSLOADER</strong> stage at this point, but magic occurs there.</p>
+<p>And our app still isn&#8217;t deployed yet.  But we&#8217;re getting there.</p>
+<p>Finally, we enter the REAL stage of deployment, which fittingly-enough, is where the actual deployment occurs.  Hooray!</p>
+<p>Our <strong>TomcatDeployer</strong> is hanging out there, waiting for <strong>JBossWebMetaData</strong> objects to appear.  When it sees one, it goes to work setting up information for Tomcat to deploy a web-app.  It configures everything in Tomcat from the information other deployers figured out from web.xml and jboss-web.xml and embodied in the MetaData.</p>
+<p>It jams it into Tomcat, hits the big red &#8220;go&#8221; button, and port 8080 is serving you web-app.</p>
+<p>Finally.</p>
+<p>In general, to deploy in AS5 using Microcontainer, you need some MetaData bits, and perhaps a bag of files/classes/resources.  Nothing says they have to be bundled into a .war, or include some j2ee XML deployment descriptor.  If you have other magical ways of bundling MetaData and resources, you&#8217;re good to go.</p>
+<p>Of course, Ales or Adrian may tell me I&#8217;m completely wrong.  That&#8217;s always a possibility.  In fact, I&#8217;m sure I&#8217;ve got some things wrong, in reverse order, and otherwise mixed-up.</p>
+<p>Here&#8217;s a picture for you, though.</p>
+<p><a href="http://www.fnokd.com/wp-content/uploads/2008/09/war-deployment.png"><img class="aligncenter size-medium wp-image-474" title="war-deployment" src="http://www.fnokd.com/wp-content/uploads/2008/09/war-deployment-292x300.png" alt="" width="292" height="300" /></a></p>
+<p><strong>Update:</strong></p>
+<p>While discussing this on the <a title="Forum post" href="http://www.jboss.com/index.html?module=bb&amp;op=viewtopic&amp;t=142550">Microcontainer user&#8217;s forum</a>, I discovered that there are indeed several errors and inconsistencies in the above.</p>
+<p><strong>Update #2:</strong></p>
+<p>New image, slightly new text to match the image better.  Comments and clarifications still welcomed.</p>

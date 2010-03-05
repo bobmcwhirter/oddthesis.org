@@ -1,0 +1,139 @@
+#!/usr/bin/env ruby
+
+require 'rexml/document'
+
+class Importer
+
+  def initialize(import_file)
+    @import_file = import_file
+  end
+
+  def import_file
+    doc = REXML::Document.new( File.read( @import_file ) )
+    root = doc.root
+    root.get_elements( 'entry' ).each do |entry|
+      import_entry( entry )
+    end
+  end
+
+  private
+
+  def import_entry(entry_xml)
+    title    = entry_xml.get_text( 'title' ).to_s
+    slug     = entry_xml.get_text( 'slug' ).to_s
+    author   = entry_xml.get_text( 'author' ).to_s
+    content  = REXML::Text.unnormalize( entry_xml.get_text( 'content' ).to_s )
+    
+    content = convert_html_to_markdown( content )
+    #puts content
+    #puts ''    
+  end
+
+  def convert_html_to_markdown(xml)
+    doc = REXML::Document.new( '<entry>' + xml + '</entry>' )
+    root = doc.root
+
+    converter = Markdowner.new( root )
+    markdown = converter.convert
+  end
+
+  class Markdowner
+    def initialize(entry_elem)
+      @entry_elem = entry_elem
+    end
+   
+    def convert
+      @buffer = ''
+      @list_depth = 0
+      entry( @entry_elem )
+      @buffer
+    end
+
+    private
+
+    def entry(entry_elem)
+      block( entry_elem )
+=begin
+      entry_elem.each_element do |e|
+        case ( e )
+          when REXML::Element
+            case ( e.name )
+              when 'p'
+                paragraph( e )
+              else
+                puts "unknown tag #{e.name}"
+            end
+          when REXML::Text
+        end
+      end
+=end
+    end
+
+    def paragraph(p_elem)
+      block(p_elem)
+      @buffer += "\n\n"
+    end
+
+    def block(block_elem)
+      block_elem.each_child do |e|
+        case ( e )
+          when REXML::Text
+            @buffer += e.to_s
+          when REXML::Element
+            case ( e.name )
+              when 'a'
+                #link_text = e.text
+                #link_url  = e.attributes['href']
+                @buffer += e.to_s
+              when 'img'
+                #img_url  = e.attributes['src']
+                #alt_text = e.attributes['alt'] 
+                #( alt_text = img_url ) if ( alt_text.empty? )
+                @buffer += e.to_s
+              when 'b', 'strong'
+                @buffer += '*'
+                block( e )
+                @buffer += '*'
+              when 'em'
+                @buffer += '_'
+                block( e )
+                @buffer += '_'
+              when 'code'
+                @buffer += '`'
+                block( e )
+                @buffer += '`'
+              when 'h3'
+                @buffer += '### '
+                @buffer += e.text
+                @buffer += "\n"
+              when 'p'
+                paragraph( e )
+              when 'span'
+                block( e )
+              when 'blockquote'
+                @buffer += '> '
+                block( e )
+              when 'ul', 'ol'
+                @list_depth += 1
+                block( e )
+                @list_depth -= 1
+              when 'li'
+                @buffer += ( '    ' * @list_depth  )
+              when 'br'
+                # ignore
+              else
+                puts "unknown tag #{e.name}"
+            end
+        end
+      end
+    end
+
+  end
+
+end
+
+if ( $0 == __FILE__ ) 
+  importer = Importer.new( ARGV[0] )
+  importer.import_file
+end
+

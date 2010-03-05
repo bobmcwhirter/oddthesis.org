@@ -1,0 +1,12 @@
+---
+title: "My cloud or yours?"
+author: Bob McWhirter
+layout: post
+---
+<p>After presenting <a title="VM2 announcement" href="/posts/2008-12-vm2-like-ec2-but-local">VM2</a>, I was introduced to the Red Hat team doing <a title="oVirt" href="http://ovirt.org/">oVirt</a>.&nbsp; oVirt is a layer on top of <a title="libvirt" href="http://libvirt.org/">libvirt</a> to help manage virtual machines on a single host or a farm of machines.&nbsp; Since it uses libvirt, it will ultimately be able to target multiple hypervisors, but <a title="KVM" href="http://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine">KVM</a> is obviously the focus these days.</p>
+<p>Since oVirt has made such great progress in handling more than localhost VMs, it seems like a good foundation for building an EC2 type of cloud within your own datacenter (or laptop).</p>
+<p>So I've begun work on a thin <a title="EC2 SOAP API documentation" href="http://docs.amazonwebservices.com/AWSEC2/2008-12-01/DeveloperGuide/index.html?soap-operations.html">EC2 API</a> layer.&nbsp; By providing an EC2 API on top of oVirt, cloud tooling can treat the EC2 API as a common interface, regardless of your ultimate virtualization fabric or where its actually hosted.</p>
+<p>The <a title="Eucalyptus" href="http://eucalyptus.cs.ucsb.edu/">Eucalyptus</a> team has done some work on host-your-own-EC2-compatible cloud, so it's certainly feasible.</p>
+<p>Once we have a common API for interacting with clouds, we can then work up the stack, using <a title="JBoss JOPR" href="http://www.jboss.org/jopr/">JOPR</a>, to manage the virtual nodes we've deployed.</p>
+<p>Here's the <a title="DotW" href="/tags/dotw">diagram-of-the-week</a> to demonstrate.&nbsp; Blue bits are <a title="JBoss.org" href="http://jboss.org/">JBoss.org</a> projects, red bits come from the Red Hat teams, and yellow are your own applications and servers.</p>
+<p><img src="/system/assets/jboss-haze-diagram.png" alt="10k' View" width="378" height="508" /></p>

@@ -1,0 +1,26 @@
+---
+title: "JBoss Cloud 1.0.0.Beta7 released!"
+author: Marek Goldmann
+layout: post
+---
+<p>I'm happy to announce next  <a href="/theses/jboss-cloud/projects/jboss-cloud">JBoss Cloud</a> beta!</p>
+<h3>JOPR</h3>
+<p>JOPR is bundled in our appliances! As I mentioned in my <a href="/posts/2009-08-what-can-we-expect-in-the-upcoming-beta7-release">earlier post</a>, JOPR, a monitoring and managing platform from JBoss garage, is now included by default in JBoss Cloud. What does it mean? You get monitoring of your running instances for free with all shiny charts and historical data. Of course that's not everything. You can define alerts for resources you're monitoring!</p>
+<p>I thought that we could monitor JBoss AS too, but JBoss AS 5.0 and 5.1 isn't supported yet... There is a <a href="http://www.jboss.org/community/wiki/Jopr-JBossAS5plugin">JBoss AS plugin</a>, but it will work with JBoss AS 5.2+. When it'll be released we'll upgrade immediately to deliver first-class JBoss monitoring.</p>
+<p><a href="/theses/jboss-cloud/projects/jboss-cloud/pages/jopr">Read more</a> about using configuring JOPR in JBoss Cloud.</p>
+<p>To see a full list of resources that can be managed by JOPR go to <a href="http://www.jopr.org/confluence/display/JOPR2/Home">JOPR wiki</a>, especially take a look at <a href="http://www.jopr.org/confluence/display/JOPR2/Managed+Resources">Managed Resources page</a>.</p>
+<h3>CloudFront support<br /></h3>
+<p>If you're new to Amazon CloudFront read more <a href="http://aws.amazon.com/cloudfront/">here</a>. <a href="/theses/jboss-cloud/projects/jboss-cloud/pages/releases">Beta7 images</a> are released via CloudFront. CloudFront is a web service for files delivery. The main difference between uploading a release to a host via SSH and to CloudFront is that CloudFront files are replicated over the globe to many locations. This is transparent to client, only thing he'll notice is great download speed :)</p>
+<p>For CloudFront support we need to change appliance definition file. Read about current structure <a href="/theses/jboss-cloud/projects/jboss-cloud-support/pages/configuration-file">here</a>.</p>
+<p>Read more about <a href="/theses/jboss-cloud/projects/jboss-cloud-support/pages/cloudfront">using CloudFront</a> in JBoss Cloud.</p>
+<h3>Are we faster?</h3>
+<p>I think yes, we're are a bit. We removed several unnecessary services enabled on boot. You feel difference  if you're using images in your local virtualization environment. Want an example? Front-end appliance boots 15 sec on my laptop using VMware Fusion.</p>
+<p>On EC2 this takes much more time (about five minutes/instance), I explained why <a href="/posts/2009-08-what-can-we-expect-in-the-upcoming-beta7-release">here</a>.</p>
+<h3>Bug fixes<br /></h3>
+<p>We fixed a <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets?q=milestone%3A&quot;1.0.0.Beta7&quot;+tagged%3A&quot;bug&quot;">few bugs</a>.</p>
+<p>Most annoying was <a href="http://oddthesis.lighthouseapp.com/projects/19748/tickets/88-gossiprouter-uses-40-of-cpu">#88</a>. Versions pre 2.6.12 of GossipRouter were eating about 40% of CPU in idle. This wasn't great. Thanks to <a href="http://belaban.blogspot.com/">Bela</a> who fixed this bug really quick for us!</p>
+<p>After JGroups 2.6.12.GA was released we updated it immediately. Beta7 is the first version that upgrades JGroups version across front-end and back-end appliances. Homogeneity will counteract possibly errors caused by version mismatch.</p>
+<h3>Where it is?</h3>
+<p>New JBoss Cloud images are <a href="/theses/jboss-cloud/projects/jboss-cloud/pages/releases">available</a> for immediately download. Links to images are on our <a href="/theses/jboss-cloud/projects/jboss-cloud/pages/releases">Releases</a> page. There are also AMI id's you can copy.</p>
+<p>We're always for you in <a href="irc://irc.freenode.net/jboss-cloud">#jboss-cloud</a> and on our <a href="mailto:jboss-cloud-subscribe@oddthesis.org">mailing list</a>. <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/new">Tickets</a> are welcome too.</p>
+<p>Have fun!</p>

@@ -1,0 +1,36 @@
+---
+title: "JBoss Cloud 1.0.0.Beta2 is out!"
+author: Marek Goldmann
+layout: post
+---
+<p>I'm happy to announce a new version of JBoss Cloud. This is my first release, so I would like to say hi to everyone!<br /><br />This release contains three new major features (appliance-builder, meta-appliance and VMware ESX support) and a bunch of bug fixes.</p>
+<h3>Meta-appliance aka metappliance</h3>
+<p>If you don't want to create your own environment for building appliances on your system, you can use our <strong>meta-appliance</strong>. We provide it to you in three formats:</p>
+<ul>
+<li><strong>RAW</strong> &mdash; Ideally to run on KVM,</li>
+<li><strong>VMware Enterprise</strong> &mdash; Good for VMware ESX/ESXi,</li>
+<li><strong>VMware Personal</strong> &mdash; Best for VMware Server, Workstation, Fusion, Player etc.</li>
+</ul>
+<p>Just <a href="http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta2/i386/meta-appliance/">grab</a> best format for you from our server and use it. There is a <a href="/theses/jboss-cloud/projects/jboss-cloud/pages/metappliance">page</a> which describes how to use it.</p>
+<h3>appliance-builder</h3>
+<p>Another big change is appliance-builder. It is a wizard for JBoss Cloud appliance building. Just run it from root folder of JBoss Cloud source and see it in action. In next releases there will be more and more features that will make appliance creation quicker and sweeter.</p>
+<h3>VMware ESX/ESXi support</h3>
+<p>Beginning with Beta2 JBoss Cloud has support for VMware ESX/ESXi. Yeah, that's true &mdash; you can run JBoss Cloud on VMware Infrastructure 3! Just build an VMware enterprise appliance (or <a href="http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta2/i386/">grab it</a> from our server!) and push it to VMware ESX/ESXi server via VI Client!</p>
+<p>To build an appliance for VMware enterprise product just run:</p>
+<pre>./appliance-builder -V</pre>
+<p>Wizard will help you select appliance and best values for it.</p>
+<p>Build process will take some time, so go get some beer or coffee. After your'e back, check directory <strong>$JBOSS_CLOUD_HOME/build/appliances/$ARCH/$APPLIANCE_NAME/vmware/enterprise/</strong> for appliance.</p>
+<p>Unfortunately ESX support requires two packages: <strong>livecd-tools-021-1.fc10</strong> and <strong>appliance-tools-003.11-1.fc10</strong> that aren't included in fedora stable repositories. New packages are available from <em>updates-testing</em>. Just run the command to update:</p>
+<pre>yum --enablerepo=updates-testing update livecd-tools appliance-tools</pre>
+<p>If you don't want to build VMware ESX appliances you can omit the update, of course.</p>
+<h3>Other stuff</h3>
+<p>Our yum repository has also a new structure. From Beta2 all appliances could be updated via yum update command!</p>
+<p>Notice also that default password for all our appliances is from now <strong>oddthesis</strong>.</p>
+<p>There was also some work on make appliances working in 64 bit environments. 64 bit appliances <span style="text-decoration: underline;">should</span> work now.</p>
+<h3>Where can I get it?</h3>
+<p>Pre-built appliances are available for all supported output formats to <a href="http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta2/i386/">download from our server</a>. All appliances are built only for i386 architecture, sorry. If you really want 64 bit support &mdash; grab <a href="http://github.com/bobmcwhirter/jboss-cloud/tree/master">JBoss Cloud sources</a> and build own appliances, that's really easy!</p>
+<p>All VMware images are assuming, that you are running those in environment with a network connection named <strong>NAT</strong>. This is default in VMware personal environments and it should work out of-the-box. However if you want to run it in VMware ESX and <strong>NAT</strong> doesn't match your configuration (most likely) simply put your network name in <strong>nethernet0.networkName</strong> parameter in .vmx file.</p>
+<p>I you aren't using <a href="/theses/jboss-cloud/projects/vm2">VM2</a> for running appliances, you must set manually <strong>JBOSS_PROXY_LIST</strong> and <strong>JBOSS_GOSSIP_HOST</strong> in <strong>/etc/jboss-as5.conf</strong> file in jboss-as5-appliance to have a fully working JBoss AS 5 cluster.</p>
+<h3>Last words...<br /></h3>
+<p>Don't forget to take a look at <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/bins/13626">detailed list of tickets done in 1.0.0.Beta2</a>! If you have found a bug or have a good idea how to make JBoss Cloud better &mdash; <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/new">fill a ticket</a>!</p>
+<p>If you have any problems, questions on JBoss Cloud bits or just want tell us that you're using it, contact us via <a href="/posts/2008-12-irc-presence">IRC</a> or our <a href="/posts/2008-11-mailing-lists-for-jboss-rails-and-jboss-cloud">mailing list</a>. We're happy to hear from you!</p>

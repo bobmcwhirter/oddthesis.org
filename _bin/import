@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+
+require 'rexml/document'
+require 'date'
+require 'fileutils'
+
+class Importer
+
+  def initialize(import_file, output_dir)
+    @import_file = import_file
+    @output_dir  = output_dir
+  end
+
+  def import_file
+    doc = REXML::Document.new( File.read( @import_file ) )
+    root = doc.root
+    root.get_elements( 'entry' ).each do |entry|
+      import_entry( entry )
+    end
+  end
+
+  private
+
+  def import_entry(entry_xml)
+    title    = entry_xml.get_text( 'title' ).to_s
+    slug     = entry_xml.get_text( 'slug' ).to_s
+    author   = entry_xml.get_text( 'author' ).to_s
+    published = DateTime.parse( entry_xml.get_text( 'published' ).to_s )
+    content  = REXML::Text.unnormalize( entry_xml.get_text( 'content' ).to_s )
+
+    output_path = File.join( @output_dir, published.strftime( "%Y-%m-#{slug}.html.erb" ) )
+    FileUtils.mkdir_p( File.dirname( output_path ) )
+    File.open( output_path, 'w' ) do |f|
+      f.puts '---'
+      f.puts "title: \"#{title}\""
+      f.puts "author: #{author}"
+      f.puts "layout: post"
+      f.puts '---'
+      f.puts content
+    end
+    
+  end
+
+
+end
+
+if ( $0 == __FILE__ ) 
+  importer = Importer.new( ARGV[0], ARGV[1] )
+  importer.import_file
+end
+

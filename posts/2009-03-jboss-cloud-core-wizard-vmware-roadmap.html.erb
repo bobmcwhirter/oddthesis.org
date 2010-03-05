@@ -1,0 +1,41 @@
+---
+title: "JBoss-Cloud: Core, Wizard, VMware &amp; Roadmap"
+author: Marek Goldmann
+layout: post
+---
+<h3>Introducing jboss-cloud-support<br /></h3>
+<p>The most important change in JBoss-Cloud project is moving its core to a external project called <strong>JBoss-Cloud Support</strong>. Sources are available, as usual, <a href="http://github.com/goldmann/jboss-cloud-support/">at github</a>.</p>
+<p>You might be asking what's the reason of that move? As you know we at JBoss are open, really open. If you want to generate appliances, not neccessary for Cloud, you can use only jboss-cloud-support with self created appliance files and all needed stuff for that. But you should know that we're focusing on JBoss-Cloud project, though.</p>
+<p>If something isn't working for you in a "stand-alone" version of JBoss-Cloud, tell us about that. We're on <a href="/posts/2008-12-irc-presence">IRC</a> and we have also a <a href="/posts/2008-11-mailing-lists-for-jboss-rails-and-jboss-cloud">mailing-list</a>. You can <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/new">create a ticket</a> too (remember to add <strong>core</strong> tag &mdash; this will help a lot!).</p>
+<h3>Wizard improvements<br /></h3>
+<p>Wizard has been completely rewritten. What's new? In one word: everything. Wizard shipped with 1.0.0.Beta2 has enabled only selecting appliance and output type. <strong>Now you can choose everything you need</strong>:</p>
+<ul>
+<li>Appliance to build,</li>
+<li>Disk size,</li>
+<li>Memory size,</li>
+<li>Output type,</li>
+<li>Network name (if VMware Personal or Enterprise output type is selected).</li>
+</ul>
+<p>More, you can save an appliance configuration and reuse it later! By default wizard will store configurations in <strong>~/.jboss-cloud/configs/</strong> directory. You can override this by setting <strong>JBOSS_CLOUD_CONFIG_DIR</strong> environment variable, eg:</p>
+<blockquote>
+<p>export JBOSS_CLOUD_CONFIG_DIR=/opt/jbc/configs/</p>
+<p>./wizard</p>
+</blockquote>
+<p>At start wizard will show all saved configurations. After selecting saved config there are three options:</p>
+<ol> </ol> 
+<ul>
+<li><strong>view</strong> &mdash; it'll print saved configuration,</li>
+<li><strong>delete</strong> &mdash; it'll remove selected configurations from disk,</li>
+<li><strong>use</strong> (default) &mdash; it'll build selected configuration.</li>
+</ul>
+<p>To run wizard go to JBoss-Cloud home folder and run <strong>./wizard</strong>. Note that it was renamed from <strong>appliance-builder</strong>.<br /><br /><strong>Tip</strong>: you can exit from wizard any time by pressing CTRL+C!</p>
+<h3>VMware support changes<br /></h3>
+<p>VMware support code has been completely rewritten, too. Most important changes are:</p>
+<ul>
+<li><strong>Switch to SCSI disks</strong> for VMware Personal appliances (Enterprise has SCSI disks already),</li>
+<li>Got rid of some dependencies: python-virtinst and qemu-img are <strong>no longer required</strong>!</li>
+<li>Increase VMware appliances generation speed. If you have generated RAW image before, converting it to VMware images, both Personal and Enterprise will take not ~20 minutes as before, but <strong>&lt; 5 sec</strong>, really, check it out!</li>
+</ul>
+<h3>When it will be released?<br /></h3>
+<p>We're getting closer and closer to next beta release of JBoss-Cloud. Take a look at <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/bins/14145">tickets</a> assigned to 1.0.0.Beta3 milestone. We're going to push it in the near future, so be prepared to get latest and best Cloud out there!</p>
+<p>But if you are impatient (don't worry, we like them), take a look at <a href="/theses/jboss-cloud/projects/jboss-cloud/pages/how-to-start">how to start page</a>.</p>

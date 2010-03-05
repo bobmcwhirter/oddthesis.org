@@ -1,0 +1,23 @@
+---
+title: "Nobody should need cron"
+author: Bob McWhirter
+layout: post
+---
+<p>Ultimately, we all want easy-to-replicate deployments of our apps.&nbsp; Perhaps we're deploying on a cloud, and deploy often on new virtual hardware.&nbsp; Perhaps we're just paranoid, and expect an earthquake to hit our datacenter.&nbsp; Or maybe we expect to grow like the 4H club's monster pumpkin, and fully anticipate moving to new/different hardware soon.</p>
+<p>Either way, the fewer moving parts and manual steps you have to follow, the better.</p>
+<p>To me, cronjobs are the most-often forgotten step. They don't take up visible room on the filesystem.&nbsp; They don't listen on a port.&nbsp; They're easy to forget.&nbsp; You can forget to install them.&nbsp; You can forget to remove them.&nbsp; In general, cronjobs annoy me.</p>
+<p>But there's still the need to do things at certain times, or on a regularly occurring schedule.</p>
+<p>With Rails apps, we can vendorize our dependencies.&nbsp; With JRuby-on-Rails, we basically vendorize the whole language.&nbsp; And with JBoss-Rails, we have a really nice and complete environment.&nbsp; Java has tried real hard to allow you to deploy entirely within a container.&nbsp; JBoss AS certainly provides everything we'd need.</p>
+<p>Specifically, it provides <a title="Quartz" href="https://quartz.dev.java.net/">Quartz</a>.</p>
+<p>Since we're running in AS, we're happy to write deployers if needed, and we have a scheduler already setup in AS, I think we can bake scheduled tasks right into application deployment.</p>
+<p>Imagine <strong>$RAILS_ROOT/app/scheduled-tasks/blog_poller.rb</strong>.</p>
+<p>It could have a fairly simple <strong>execute()</strong> method on it.</p>
+<p>When your app is deployed, $RAILS_ROOT/config/scheduler.rb could be read to set up the quartz tasks.&nbsp;</p>
+<p>Cron's syntax isn't exactly warm and fuzzy.&nbsp; I think common case is a recurring interval for a task execution.&nbsp; Something like...</p>
+<pre>Scheduler.deploy do |schedule|<br />  schedule.every( 30.minutes ).run( BlogPoller )<br />end<br /></pre>
+<p>Simple enough. If parameters are needed, perhaps something akin to</p>
+<pre>Scheduler.deploy do |schedule|<br />  schedule.every( 30.minutes ).run( BlogPoller ).with(<br />    :number_of_retries=&gt;3,<br />    :notify_on_failure=&gt;true<br />  )<br />end<br /></pre>
+<p>Some syntax to support concrete time-of-day or day-of-week should be doable.&nbsp; It might be worth investigating the <a title="Chronic gem" href="http://chronic.rubyforge.org/">chronic</a> gem.</p>
+<p>And since we're handling the deployment, we don't have to wiggle these in strangely as part of the web-app.&nbsp; A deployer will look for <strong>config/scheduler.rb</strong>, fire up a ruby interpreter to figure out what the schedule is, and then go deploy actual scheduled tasks into the Quartz service.&nbsp; Scheduled tasks can be a first-class component like a Servlet, a message queue, or an EJB.</p>
+<p>Deploy your app, your scheduled tasks get deployed too.&nbsp; Undeploy, and the scheduled tasks get cancelled and removed likewise.</p>
+<p>&nbsp;</p>

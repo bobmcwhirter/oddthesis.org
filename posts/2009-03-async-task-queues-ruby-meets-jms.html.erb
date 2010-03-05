@@ -1,0 +1,22 @@
+---
+title: "Async Task Queues: Ruby meets JMS"
+author: Bob McWhirter
+layout: post
+---
+<p>I keep having "asynchronous messaging" listed in my presentations as something else "beyond rails" JBoss could bring to the Ruby table.&nbsp; A guy (dude, sorry, I forgot your name) at DevNexus got excited by that idea.&nbsp; So I've been hacking.</p>
+<p>Instead of just bridging JMS to Ruby and saying <em>ta-da</em>, I noticed that most folks in the Ruby world currently play with async task queues.&nbsp; Hang out in <a title="#github IRC" href="irc://irc.freenode.net/github"><strong>#github</strong></a> long enough, and you'll see them talking about pausing the queue, restarting the queue, the queue being clogged, etc.&nbsp;</p>
+<p>Here, they're using the queue not so much to pass messages, but to trigger a unit of work to be executed outside of the "normal" thread of control.&nbsp;</p>
+<p>Sometimes that thread is a web-request, and they queue up an action like forking a repository.&nbsp; Sometimes that thread is a post-commit hook, and they queue up actions such as IRC notifications and other integrations.</p>
+<p>Thus, I've started to implement JMS, but so far only exposing it as an asynchronous task-queue.</p>
+<p>I'm completely open to suggestions, but my current musings think we want a ruby class per queue.</p>
+<pre>class PostCommitHookQueue<br />  # I'm a queue!<br />end<br /></pre>
+<p>Maybe each queue can accept a handful of different tasks to execute.&nbsp; Let's represent these by methods.&nbsp; Tasks certainly need some parameters, so let's have a payload argument to contain those parameters.</p>
+<pre>class PostCommitHookQueue<br /><br />  def generate_commit_mail(payload)<br />    # generate an email containing the commit<br />  end<br /><br />  def notify_irc_channels(payload)<br />    # go ping the project's IRC channel<br />  end<br /><br />end<br /></pre>
+<p>We create this under app/queues/post_commit_hook_queue.rb, and we're off and running.</p>
+<p>But how do we send stuff to it?&nbsp; I'm thinking of a class method <strong>enqueue(task, payload)</strong>.</p>
+<p>Here, a client is adding a <strong>:generate_commit_mail</strong> task to the queue, with a hash of parameters as the payload.</p>
+<pre>PostCommitHookQueue.enqueue( :generate_commit_mail, <br />                             { :project=&gt;'jboss-rails', <br />                               :hash=&gt;872e971ea8 } )<br /></pre>
+<p>This call is non-blocking, as it's ultimately just sending a message to a JMS destination.&nbsp;</p>
+<p>Under the covers, each Ruby queue class ends up deploying an actual JMS queue, which can be administered like any other JMS queue within JBoss.</p>
+<p>Once we get this going, I'll look into how we can expose clustered queues, durable queues, and all the other functionality of JMS.&nbsp; But do it nicely using the semantics of this async task queue use-case.</p>
+<p>Any thoughts on the design?&nbsp; Any suggested use-cases for one-to-many topics, instead of just one-to-one queues?</p>

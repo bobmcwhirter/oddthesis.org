@@ -1,0 +1,27 @@
+---
+title: "Boot up JBoss"
+author: Bob McWhirter
+layout: post
+---
+<p>On my path towards clustering a Rails app on JBoss on EC2, I <a title="Stumbling into the Thincrusties" href="http://www.fnokd.com/2008/10/11/stumbling-through-technology/">stumbled across</a> Bryan Kearney and the other <a title="Thincrust" href="http://thincrust.net/">Thincrust</a> guys. With their help, I now have a JBoss AS5 + jboss-rails &#8220;appliance&#8221; ready to roll.</p>
+<p>Grab the <a title="Raw image" href="http://fnokd.com/~bob/jboxx/jboxx5-0.1-preview-1-raw.tar.gz">raw image</a> or the <a title="JBoxx VMWare image" href="http://fnokd.com/~bob/jboxx/jboxx5-0.1-preview-1-vmware.tar.gz">VMWare image</a>, and play along at home.</p>
+<p>Fire up the image in your favorite virtualization environment. I give my virtual machine at least a gig of RAM. Marvel at the pretty Grub splash screen, courtesy of <a title="James Cobb" href="http://www.insectengine.com/wordpress/">James Cobb</a> (JBoss.org designer).</p>
+<p><a href="http://www.fnokd.com/wp-content/uploads/2008/10/picture-6.png"><img class="aligncenter size-full wp-image-551" title="Grub" src="http://www.fnokd.com/wp-content/uploads/2008/10/picture-6.png" alt="" width="456" height="339" /></a></p>
+<p>Let it boot on up, and you&#8217;ll notice a handful of things:</p>
+<ul>
+<li>Very few things roll across during boot.  The image is an assembly of &#8220;just enough&#8221; OS bits.</li>
+<li>Before JBoss boots, &#8220;Installing Appliance&#8221; or &#8220;Updating Appliance&#8221; will scroll by.  This is the Thincrust magic that allows adjustment of the appliance in a consistent and controlled manner (via Puppet).</li>
+<li>JBoss AS 5 (with rails deployer) starts at boot.</li>
+</ul>
+<p>You can login with root password of <strong>thincrust</strong>.</p>
+<p>The login prompt will tell you the IP address of the appliance, since it probably booted off DHCP.  JBoss will be up and running at <code><strong>http://&lt;IP_ADDRESS&gt;:8080/</strong></code>.</p>
+<p>You can <code><strong>su jboss</strong></code>, whose <code>$HOME</code> is <code>/opt/jboss/jboss-as5</code>, which coincidentally is <code>$JBOSS_HOME</code>.  The <code>default</code> configuration is used to start the AS.  Logs are under <code>/opt/jboss/jboss-as5/server/default/log/</code>.  And to deploy, just drop something into <code>/opt/jboss/jboss-as5/server/default/deploy/</code> and it&#8217;ll hot-deploy.</p>
+<p>To control the service, as root:</p>
+<ul>
+<li><code>service jboss stop</code></li>
+<li><code>service jboss start</code></li>
+<li><code>service jboss status</code></li>
+</ul>
+<p>I&#8217;ll make the RPMs used to build this available sometime soon.  Until then, you can poke around <a title="my JBoss RPMification project" href="http://github.com/bobmcwhirter/jboss-rpm/tree/master">the bits I use to create the RPMs</a> ultimately used by Thincrust to build the appliance image.  They are packaged in a way that makes my Red Hat brethren throw up in their mouths a little bit.</p>
+<p>Also, once I test&#8217;em on EC2, I&#8217;ll throw out public AMIs for testing.</p>
+<p>By no means is this complete.  This just marked a nice spike of a milestone along the way.  There&#8217;s still plenty of things that&#8217;ll poke you in the eye if you&#8217;re not careful.  Always wear your safety harness.  Drink plenty of fluids.  Keep away from children.</p>

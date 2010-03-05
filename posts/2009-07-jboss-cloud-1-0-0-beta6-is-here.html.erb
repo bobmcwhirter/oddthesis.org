@@ -1,0 +1,20 @@
+---
+title: "JBoss Cloud 1.0.0.Beta6 is here"
+author: Marek Goldmann
+layout: post
+---
+<p>There was really quiet on our blog for some time, I know. But, hey, there are several reasons for that! Most important is we&rsquo;re finally moved to Fedora 11.</p>
+<h3>Fedora 11 is here!</h3>
+<p>This was a real big task. I though we can just switch repo locations and that&rsquo;s it! No, it wasn&rsquo;t so simple and smooth as I though. This has resulted finally in not supporting Fedora 10 anymore. Sad, but true. Supporting those two versions was really too difficult to maintain, mostly because of different RPM package formats and lack of libguestfs in Fedora 10.</p>
+<h3>Libguestfs</h3>
+<p>Have you heard about great library called <a href="http://libguestfs.org/">libguestfs</a>? It&rsquo;s a great tool for accessing and modifying disk images. JBoss Cloud is a nice use case for this tool. From Beta6 everything we&rsquo;re doing with RAW disks is done with libguestfs. This gives us more stable code, and we can now do more fancy stuff!<br /><br />There was several issues with libguestfs, but libguestfs team has fixed them really quick, thanks!</p>
+<h3>Other (important) things</h3>
+<p>We&rsquo;ve done initial code refactoring and review. This will improve our ability to modify/add new features to JBoss Cloud.</p>
+<p>For those who are building own images: now we have great logging for our rake tasks. This has decreased the amount of messages printed to the screen. But if you want all messages, just turn on debug:</p>
+<pre>JBOSS_CLOUD_LOG_THRESHOLD=debug rake appliance:management-appliance:vmware:personal</pre>
+<p>We fixed also many, really many bugs.</p>
+<h3>Where I can get it?</h3>
+<p>As usual, Beta6 is available on our <a href="/theses/jboss-cloud/projects/jboss-cloud/pages/releases">release page</a>.</p>
+<h3>I need help!</h3>
+<p>Drop a message on our o <a href="mailto:jboss-cloud-subscribe@oddthesis.org">mailing list</a><a></a>, or ping us on&nbsp; <a href="irc://irc.freenode.net/jboss-cloud">IRC</a>, we're happy to help you!</p>
+<p>If you found a bug, please let us know by filling a <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/new">new ticket</a>!</p>

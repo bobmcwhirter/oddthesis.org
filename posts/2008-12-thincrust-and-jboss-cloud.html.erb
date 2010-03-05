@@ -1,0 +1,23 @@
+---
+title: "Thincrust and JBoss-Cloud"
+author: Bob McWhirter
+layout: post
+---
+<p>It's Friday, and I've posted no diagrams this week, so I figured it was time.</p>
+<p>I've previously mentioned my use of <a title="Thincrust" href="http://thincrust.net/">Thincrust</a> tooling to build appliance images.&nbsp; Now that AS5 GA is available, I needed to update my images.&nbsp; Also, Fedora 10 came out since I last spun them.</p>
+<p>The 10,000' view of appliance-creator looks like this:</p>
+<p><img src="/system/assets/appliance-diagram.png" alt="Overview" /></p>
+<p>It's a bunch of RPMs, stitched together through a Kickstart file.&nbsp; The AOS base RPMs are just a minimal bundle of RPMs needed to have a roughly useable system.</p>
+<p>Then we slurp in the appliance RPM.&nbsp; This RPM is not JBoss AS5, but rather the definition of a server that will be running AS5.</p>
+<p>Let's explode that into another diagram:</p>
+<p><img src="/system/assets/appliance-diagram-innards.png" alt="Appliance RPM" /></p>
+<p>The appliance RPM has an explicit dependency on the actual JBoss AS5 RPM, which is created from the binary distribution and an appropriate <strong>init.d</strong> script.&nbsp; The dependency on Open JDK is also specified for the appliance.</p>
+<p>The appliance RPM additionally includes the ACE magic, particularly some Puppet recipes.</p>
+<p>Finally, using the Thincrust toolkit, we take the Kickstart that glues this all together and create a disk image we can boot in KVM.&nbsp; Or we can convert it to EC2 or VMWare formats.</p>
+<p>I've got a <a title="JBoss-Cloud git repository" href="http://www.github.com/bobmcwhirter/jboss-cloud">single repository</a> at this point for building the AS5 RPM, all the appliance pieces, and spinning images over on GitHub.&nbsp;</p>
+<p>If you want to try making some images, follow the<a title="Thincrust installation" href="http://thincrust.net/tooling.html"> first 3 steps of the Thincrust installation</a>, clone the repo, and run one of these commands:</p>
+<pre>rake appliance:jboss-as5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Build jboss-as5 appliance image<br />rake appliance:jboss-as5:vmx&nbsp; # Build jboss-as5 appliance image for VMWare<br /></pre>
+<p>You need Ruby Rake installed, of course.</p>
+<p>To see rake targets for notable steps along the way from a virgin workspace to VMWare images, try <strong>rake -T</strong>.</p>
+<pre>rake appliance:common-source      # Create the source tarball for appliances.<br />rake appliance:jboss-as5          # Build jboss-as5 appliance image<br />rake appliance:jboss-as5:vmx      # Build jboss-as5 appliance image for VMWare<br />rake appliance:jboss-jgroups      # Build jboss-jgroups appliance image<br />rake appliance:jboss-jgroups:vmx  # Build jboss-jgroups appliance image for VMWare<br />rake clean                        # Remove any temporary products.<br />rake clobber                      # Remove any generated file.<br />rake info                         # Get information on the build<br />rake rpm:appliance:jboss-as5      # Build jboss-as5 appliance RPM.<br />rake rpm:appliance:jboss-jgroups  # Build jboss-jgroups appliance RPM.<br />rake rpm:extras                   # Build all RPMs from extras.<br />rake rpm:extras:jboss-as5         # Build jboss-as5 RPM.<br />rake rpm:extras:jboss-jgroups     # Build jboss-jgroups RPM.<br />rake rpm:extras:jboss-rails       # Build jboss-rails RPM.<br />rake rpm:repodata                 # Create the repository metadata<br /></pre>
+<p>You may even notice the work-in-progress JGroups appliance for running a Gossip router.&nbsp; That one will probably always cohabitate with another appliance, ultimately.</p>
