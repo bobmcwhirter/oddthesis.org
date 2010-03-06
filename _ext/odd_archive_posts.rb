@@ -9,12 +9,12 @@ class OddArchivePosts
     posts = []
 
     site.pages.each do |page|
-      if ( page.relative_source_path =~ /^#{@path_prefix}\/(20[01][0-9])-([01][0-9])-([0123][0-9])-([^.]+)\..*$/ )
+      if ( page.relative_source_path =~ /^#{@path_prefix}\/(20[01][0-9])-([01][0-9])-([^.]+)\..*$/ )
         year  = $1
         month = $2
-        day   = $3
-        slug  = $4
-        page.date = Time.utc( year.to_i, month.to_i, day.to_i )
+        slug  = $3
+        #page.date = Time.utc( year.to_i, month.to_i, day.to_i )
+        page.date = DateTime.parse( page.date.to_s )
         page.slug = slug
         context = OpenStruct.new({
           :site=>site,

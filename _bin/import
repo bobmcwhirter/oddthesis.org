@@ -34,6 +34,7 @@ class Importer
       f.puts '---'
       f.puts "title: \"#{title}\""
       f.puts "author: #{author}"
+      f.puts "date: #{published.year}-#{published.month}-#{published.day}"
       f.puts "layout: post"
       f.puts '---'
       f.puts content

@@ -1,5 +1,26 @@
 ---
-layout: base
+layout: sidebar
 ---
 
-~ content
+#main-column
+  .post
+    .title
+      = page.title
+    .details
+      .author
+        = page.author
+      .date
+        post.date.strftime( '%d %B %Y' )
+    .content
+      ~ content
+
+#sidebar
+  %ul
+    - if ( page.next_post )
+      %li 
+        Next
+        %a{:href=>page.next_post.url}= page.next_post.title
+    - if ( page.previous_post )
+      %li 
+        Previous
+        %a{:href=>page.previous_post.url}= page.previous_post.title
