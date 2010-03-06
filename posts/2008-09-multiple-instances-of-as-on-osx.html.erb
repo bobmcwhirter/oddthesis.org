@@ -21,7 +21,7 @@ Include /private/etc/apache2/extra/httpd-vhosts.conf
 </code></pre>
 <p>Then, in the <code>httpd-vhosts.conf</code> file I fixed it up to include my virtual host for the head-end load-balancing stuff.</p>
 <p>The <code>&lt;VirtualHost&gt;</code> is only barely conformant, and even the <code>DocumentRoot</code> is gratuitous, really.  It looks like this:</p>
-<pre style="overflow:auto;font-size:90%"><code>
+<pre style='overflow:auto;font-size:90%'><code>
 &lt;VirtualHost *:80&gt;
   ServerName app.local.ballast
   DocumentRoot "/Users/bob/public_html"
@@ -33,7 +33,7 @@ Include /private/etc/apache2/extra/httpd-vhosts.conf
 &lt;/VirtualHost&gt;
 </code></pre>
 <p>What that is doing is passing each requested path to the <code>load_balancer</code> script I&#8217;ve borrowed from I-don&#8217;t-know-&#8217;where.  It returns an augmented URL pointing to one of my localhost-bound nodes.</p>
-<pre style="overflow:auto;font-size:90%"><code>
+<pre style='overflow:auto;font-size:90%'><code>
 #!/usr/bin/env perl
 ##
 ##  lb.pl -- load balancing script

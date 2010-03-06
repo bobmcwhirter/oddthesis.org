@@ -4,18 +4,18 @@ author: Bob McWhirter
 date: 2008-8-20
 layout: post
 ---
-<p>So, I&#8217;m gearing up to work on some Java+Ruby (via JRuby) stuff.  The Java world still seems fairly entrenched in the cult of Subversion, while the Rubyists have gone with <a title="Git" href="http://git.or.cz/">Git</a> lately.</p>
-<p>I&#8217;m still wrapping my mind around Git, but with <a title="GitHub" href="https://github.com/">GitHub</a>, it&#8217;s fairly easy and straight-forward.  I paid my $7 for the micro account, to give me room to screw around.</p>
+<p>So, I&#8217;m gearing up to work on some Java+Ruby (via JRuby) stuff.  The Java world still seems fairly entrenched in the cult of Subversion, while the Rubyists have gone with <a href='http://git.or.cz/' title='Git'>Git</a> lately.</p>
+<p>I&#8217;m still wrapping my mind around Git, but with <a href='https://github.com/' title='GitHub'>GitHub</a>, it&#8217;s fairly easy and straight-forward.  I paid my $7 for the micro account, to give me room to screw around.</p>
 <p>There&#8217;s quite a few posts about mirroring SVN to a Git repository, but I feel the need to add my own, of course.</p>
 <p>My goal is mirror the trunk of the JRuby project from Codehaus SVN to my account on GitHub.  By doing this, I can track the trunk development, and also work on my own patches.</p>
 <p>I started by creating an empty repository on my GitHub account, called &#8216;jruby&#8217;.</p>
-<blockquote><p><a title="My JRuby Git repository" href="http://github.com/bobmcwhirter/jruby/tree/master">http://github.com/bobmcwhirter/jruby/tree/master</a></p></blockquote>
+<blockquote><p><a href='http://github.com/bobmcwhirter/jruby/tree/master' title='My JRuby Git repository'>http://github.com/bobmcwhirter/jruby/tree/master</a></p></blockquote>
 <p>Now, over on my always-on, Contegix-powered server, I create a brand new local git repository, also called jruby.</p>
 <blockquote><p>mkdir jruby</p>
 <p>cd jruby</p>
 <p>git init</p></blockquote>
 <p>Next I use &#8216;git svn init&#8217; to setup the SVN repository as a remote code source to track.  Using the -T switch points git to the trunk, and ignores branches and tags, which is fine for my purposes.</p>
-<blockquote><p>git svn init -T <a title="JRuby svn repository" href="http://svn.codehaus.org/jruby/trunk/jruby/">http://svn.codehaus.org/jruby/trunk/jruby/</a></p></blockquote>
+<blockquote><p>git svn init -T <a href='http://svn.codehaus.org/jruby/trunk/jruby/' title='JRuby svn repository'>http://svn.codehaus.org/jruby/trunk/jruby/</a></p></blockquote>
 <p>That does not pull any code, but it lets my local working tree know that I&#8217;m going to be pulling from an SVN repository at some point.  This setup only occurs in your local repository, and does not seem to ever get pushed to GitHub once we get to that point.</p>
 <p>So, now we do the initial pull.  Once again, this is on my always-on, Contegix-powered server, not my local laptop.  I&#8217;m doing this on a server because towards the end, we&#8217;ll be setting up a cronjob to accomplish it all.</p>
 <blockquote><p>git svn fetch</p></blockquote>
@@ -28,9 +28,9 @@ layout: post
 <blockquote><p>ssh-keygen -t dsa -f .ssh/id_dsa_github_mirroring</p></blockquote>
 <p>Next, I edit my .ssh/config to add a &#8220;fake host&#8221; so that ssh connections invoked by git will use this new key.</p>
 <p>As with all previous bits, this is still on my always-on server, not my local laptop.</p>
-<blockquote><p>Host githubmirror<br />
-User git<br />
-Hostname github.com<br />
+<blockquote><p>Host githubmirror<br/>
+User git<br/>
+Hostname github.com<br/>
 IdentityFile /home/bob/.ssh/id_dsa_github_mirroring</p></blockquote>
 <p>This will cause any invocation of &#8220;ssh githubmirror&#8221; into &#8220;ssh git@github.com -i .ssh/id_dsa_github_mirroring&#8221;.</p>
 <p>I then installed id_dsa_github_mirroring.pub into my GitHub account.</p>
@@ -57,8 +57,8 @@ IdentityFile /home/bob/.ssh/id_dsa_github_mirroring</p></blockquote>
 <p>Or use cron.</p>
 <p>I&#8217;ve cronned a script that fires every 15 minutes</p>
 <blockquote><p>#!/bin/sh</p>
-<p>cd /home/bob/github-svn-mirrors/$1<br />
-git svn rebase<br />
+<p>cd /home/bob/github-svn-mirrors/$1<br/>
+git svn rebase<br/>
 git push origin vendor</p></blockquote>
 <p>It&#8217;s run with the repository name as the first (and only) argument</p>
 <blockquote><p>*/15 * * * * /home/bob/github-svn-mirrors/bin/mirror jruby</p></blockquote>

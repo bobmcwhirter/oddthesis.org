@@ -4,17 +4,17 @@ author: Bob McWhirter
 date: 2009-2-5
 layout: post
 ---
-<p>Given thesis 3, "JBoss can provide enterprise services to Rails apps" and my need to provide an secured EC2 SOAP API to emulate Amazon locally, I figured it was time to take a look at <a title="JBossWS" href="http://jboss.org/jbossws">JBossWS</a>.&nbsp;</p>
+<p>Given thesis 3, "JBoss can provide enterprise services to Rails apps" and my need to provide an secured EC2 SOAP API to emulate Amazon locally, I figured it was time to take a look at <a href='http://jboss.org/jbossws' title='JBossWS'>JBossWS</a>.&nbsp;</p>
 <p>JBossWS can use JBoss's own stack (jbossws-native), Apache-CXF or Sun's Metro project to drive the underlying SOAP stuff.&nbsp; For ease, I've just stuck with the jbossws-native for now.</p>
-<h3>Implementing a JAX-WS handler with Ruby<br /></h3>
+<h3>Implementing a JAX-WS handler with Ruby<br/></h3>
 <p>Normally, JAX-WS likes annotations.&nbsp; A <strong>lot</strong>.&nbsp; It also seems to like code generation, if you use something like <strong>wsprovide</strong> or <strong>wsdl2java</strong>.&nbsp; You end up with a Java method for each operation, and annotations to link it all together.&nbsp;</p>
 <p>That's just not going to work for the dynamic world of Ruby.</p>
 <p>Thankfully, they do provide the <strong>javax.xml.ws.Provider</strong> interface.&nbsp; Implement that, and now your class only needs a single method to handle all operations:</p>
-<pre>public Source invoke(Source request) {<br />    ...<br />    return response;<br />}</pre>
+<pre>public Source invoke(Source request) {<br/>    ...<br/>    return response;<br/>}</pre>
 <p>This is more akin to the service(...) method on servlets.&nbsp; In my case, it'll route all handling through a JRuby interpreter to classes inside your Rails app.</p>
 <p>Since I'm working from an existing WSDL, I need to link up the definitions in the WSDL to the Java bits that will handle them.&nbsp; I have to tell the container that some Java class will handle the service defined in the WSDL.</p>
-<p>So we're back to annotations.&nbsp; Seems like we can't get away from the compiler.&nbsp; But we can get away from compile-time compiling.&nbsp; <a title="Stefano's blog" href="http://www.javalinux.it/wordpress/">Stefano Maestri</a> suggested using Javassist, which enables us to deal with run-time compilation, instead.</p>
-<p><img src="/system/assets/rubyws-generation.png" alt="Code generation" width="414" height="286" /></p>
+<p>So we're back to annotations.&nbsp; Seems like we can't get away from the compiler.&nbsp; But we can get away from compile-time compiling.&nbsp; <a href='http://www.javalinux.it/wordpress/' title='Stefano&apos;s blog'>Stefano Maestri</a> suggested using Javassist, which enables us to deal with run-time compilation, instead.</p>
+<p><img src='/images/archive/rubyws-generation.png' height='286' alt='Code generation' width='414'/></p>
 <p>So it's fairly easy to put the bulk of the dispatch-to-ruby logic into a real Java class, and generate a thin shim at runtime to hold the <strong>@WebServiceProvider</strong> annotation with the wiring information needed.</p>
 <p>While we're there, we also generate a constructor that sets the name of the ruby service, along with the name of the JRuby runtime-factory deployed by another part of the process.&nbsp; The handler can use the JRuby factory and the class name to instantiate your Ruby class and dispatch requests to it.</p>
 <p>That's awesome.&nbsp; But what triggers all of this?</p>
@@ -25,12 +25,12 @@ layout: post
 <p>This all happens around the time of the <strong>PARSE</strong> stage of deployment.</p>
 <p>After the <strong>CLASSLOADER</strong> stage is complete, so we can safely generate classes into the app's classloader, we fire off the Javassist generate based upon the <strong>RubyWebServicesMetaData</strong> we find.</p>
 <p>Once we've added our annotated shim classes to the classloader, we look for a <strong>JBossWebMetaData</strong>, which you've probably worked with in its jboss-web.xml form.&nbsp; We adjust it so that our generated classes are listed as servlets, we set up the mappings and URL patterns, and then let it slide out of our hands.</p>
-<p><img src="/system/assets/rubyws-deploy.png" alt="Ruby WS deployers" width="479" height="421" /></p>
+<p><img src='/images/archive/rubyws-deploy.png' height='421' alt='Ruby WS deployers' width='479'/></p>
 <p>Lastly, the JBossWS deployers kick in, and do whatever it is they do to turn a <strong>JBossWebMetaData</strong> into deployed web-services.&nbsp; We don't have to care about that bit at all.</p>
 <h3>Bottom Line</h3>
 <p>In general, I think the strategy for deploying Rails-centric bits of JBoss enterprise services will involve a handful of deployers wedged in at the appropriate stages, and the ability to poke around in Ruby classes to generate annotations on Java subclasses.&nbsp; Sounds complex, but it's not, really.</p>
 <p>Stuff like this:</p>
-<pre>class MyRubyHandler &lt; JBossRubyHandler<br />  targetNamespace 'http://jboss.org/myservice'<br />end</pre>
+<pre>class MyRubyHandler &lt; JBossRubyHandler<br/>  targetNamespace 'http://jboss.org/myservice'<br/>end</pre>
 <p>Becomes stuff like this:</p>
-<pre>// Generated<br />@WebServiceProvider( <br />  targetNamespace="http://jboss.org/myservice"<br />)<br />public class MyRubyHandlerProxy extends BaseRubyHandlerProxy {<br />    public MyRubyHandlerProxy() {<br />      super( "MyRubyHandler", "factory.MyAppRubyFactory" );<br />    }<br />}<br /></pre>
+<pre>// Generated<br/>@WebServiceProvider( <br/>  targetNamespace="http://jboss.org/myservice"<br/>)<br/>public class MyRubyHandlerProxy extends BaseRubyHandlerProxy {<br/>    public MyRubyHandlerProxy() {<br/>      super( "MyRubyHandler", "factory.MyAppRubyFactory" );<br/>    }<br/>}<br/></pre>
 <p>Given Javassist and a strong confidence in writing deployers, we can avoid any explicit user-invoked compilation phase, while still wiring up to Java technologies that insist on annotations.</p>

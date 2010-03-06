@@ -6,7 +6,7 @@ layout: post
 ---
 <p>Thanks to help from Ales, I've been able to really clean up and simplify the JBoss Rails deployers for Microcontainer.&nbsp; When you use JBoss Microcontainer, you can easily break down your tasks into small, bite-sized chunks.&nbsp; Because of that, we now have 7 deployers, but each only has a handful of lines.</p>
 <p>First, the picture, then we'll walk through it.</p>
-<p><img src="/system/assets/ruby-deployers.png" alt="Deployers" width="408" height="640" /></p>
+<p><img src='/images/archive/ruby-deployers.png' height='640' alt='Deployers' width='408'/></p>
 <p>Of the many deployment stages MC walks through, the JBoss Rails deployment of web apps and schedulers requires only 3: <strong>Parse</strong>, <strong>Describe</strong> and <strong>Real</strong>.</p>
 <h3>Parsing</h3>
 <p>The <strong>RailsRootReferenceParsingDeployer</strong> is responsible for handling any file matching <strong>*-rails.yml</strong> in your appserver's <strong>deploy/</strong> directory.&nbsp; This is the small YAML file that points to your <strong>RAILS_ROOT</strong> on disk, injects the <strong>RAILS_ENV</strong> you wish to deploy in, and sets up the web context root.&nbsp; This deployer handles the reference file, and emits a <strong>RailsMetaData</strong> object.</p>

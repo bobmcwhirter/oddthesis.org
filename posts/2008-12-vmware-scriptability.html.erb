@@ -5,7 +5,7 @@ date: 2008-12-30
 layout: post
 ---
 <p>Getting tired of clicking around with my mouse in VMWare Fusion on OSX, I did some googling, and found <strong>vmrun</strong>.&nbsp; It's conveniently tucked away under <strong>/Library/Application Support/VMWare Fusion/</strong>, which isn't on my $PATH, so I added a line to my <strong>.bash_profile</strong>.</p>
-<pre>alias vmrun='/Library/Application\ Support/VMware\ Fusion/vmrun'<br /></pre>
+<pre>alias vmrun='/Library/Application\ Support/VMware\ Fusion/vmrun'<br/></pre>
 <p>Now, once I've spun up an appliance image, I can easily start it from the command-line (and through a script, ultimately):</p>
-<pre>leonard:front-end-appliance bob$ <strong>vmrun start front-end-appliance.vmx</strong> <br />leonard:front-end-appliance bob$ <strong>vmrun list</strong><br />Total running VMs: 2<br />/Users/bob/oddthesis/thincrust/jboss-cloud/build/appliances/front-end-appliance/front-end-appliance.vmx<br />/Users/bob/Documents/Virtual Machines.localized/Thincrust.vmwarevm/Thincrust.vmx<br /></pre>
+<pre>leonard:front-end-appliance bob$ <strong>vmrun start front-end-appliance.vmx</strong> <br/>leonard:front-end-appliance bob$ <strong>vmrun list</strong><br/>Total running VMs: 2<br/>/Users/bob/oddthesis/thincrust/jboss-cloud/build/appliances/front-end-appliance/front-end-appliance.vmx<br/>/Users/bob/Documents/Virtual Machines.localized/Thincrust.vmwarevm/Thincrust.vmx<br/></pre>
 <p>Here you can see my Thincrust image, which I use to build the appliance images.&nbsp; And you see how I started a freshly spun appliance full of "front-end" goodness.</p>

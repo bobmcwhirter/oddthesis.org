@@ -4,15 +4,15 @@ author: Bob McWhirter
 date: 2008-10-1
 layout: post
 ---
-<p><a title="Elasticfox" href="http://developer.amazonwebservices.com/connect/entry.jspa?externalID=609">Elasticfox</a> is a nice extension for managing your relationship with <a title="Amazon EC2" href="http://aws.amazon.com/ec2/">EC2</a> from within Firefox.  It&#8217;s XUL-based, somewhat homely and odd.  But it&#8217;s so much nicer than dealing with the <code>ec2-*</code> scripts directly and copying Amazon&#8217;s wacky hash identifiers hither and thither.</p>
+<p><a href='http://developer.amazonwebservices.com/connect/entry.jspa?externalID=609' title='Elasticfox'>Elasticfox</a> is a nice extension for managing your relationship with <a href='http://aws.amazon.com/ec2/' title='Amazon EC2'>EC2</a> from within Firefox.  It&#8217;s XUL-based, somewhat homely and odd.  But it&#8217;s so much nicer than dealing with the <code>ec2-*</code> scripts directly and copying Amazon&#8217;s wacky hash identifiers hither and thither.</p>
 <p>But on OSX, the &#8220;ssh to this instance&#8221; button is wired up to Terminal.app.  I can&#8217;t stand Terminal.app.  I much prefer iTerm.</p>
 <p>So, a little AppleScript hacking, and Elasticfox now uses iTerm to connect to instances through ssh.</p>
 <p>Instead of jamming it all into a dozen <code>-e</code> options on <code>osascript</code>, I just put it in a file, and changed my configuration.</p>
-<dl id="attachment_542" class="wp-caption aligncenter" style="width: 448px;">
-<dt class="wp-caption-dt"><a href="http://www.fnokd.com/wp-content/uploads/2008/10/picture-26.png"><img class="size-full wp-image-542" title="Elasticfox configuration" src="http://www.fnokd.com/wp-content/uploads/2008/10/picture-26.png" alt="Elasticfox configuration" width="438" height="265" /></a></dt>
+<dl class='wp-caption aligncenter' id='attachment_542' style='width: 448px;'>
+<dt class='wp-caption-dt'><a href='http://www.fnokd.com/wp-content/uploads/2008/10/picture-26.png'><img class='size-full wp-image-542' title='Elasticfox configuration' src='/images/archive/picture-26.png' height='265' alt='Elasticfox configuration' width='438'/></a></dt>
 </dl>
 <p>And the script itself:</p>
-<pre style="overflow:auto;font-size:90%;"><code>
+<pre style='overflow:auto;font-size:90%;'><code>
 on run argv
   tell application "iTerm"
     activate

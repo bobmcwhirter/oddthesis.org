@@ -4,22 +4,22 @@ author: Bob McWhirter
 date: 2008-12-31
 layout: post
 ---
-<h3>EC2 is awesome, but...<br /></h3>
+<h3>EC2 is awesome, but...<br/></h3>
 <p>While I've been working towards getting stuff to work on Amazon EC2, I'm living a bandwidth-challenged lifestyle where DSL doesn't reach.&nbsp; Shuffling images back and forth to Amazon is not awesome.</p>
 <p>After discovering <strong>vmrun</strong>, I knocked together a handful of scripts to provide a workflow similar to EC2, but locally, using VMWare on my workstation.</p>
-<h3>VM2: Virtual Machine Mesh<br /></h3>
-<p>I present <a title="VM2: Virtual Machine Mesh" href="/theses/jboss-cloud/projects/vm2">VM2: Virtual Machine Mesh</a>.</p>
+<h3>VM2: Virtual Machine Mesh<br/></h3>
+<p>I present <a href='/theses/jboss-cloud/projects/vm2' title='VM2: Virtual Machine Mesh'>VM2: Virtual Machine Mesh</a>.</p>
 <p>It is not intended to be exactly compatible with EC2, but to provide "close enough" match in workflow and functionality, particularly spinning up multiple instances from a single image, and boot user-data for configuration injection.</p>
-<p>The <a title="JBoss-Cloud" href="/theses/jboss-cloud/projects/jboss-cloud">JBoss-Cloud</a> project can generate a VMWare bundle, which we register in VM2:</p>
-<pre style="font-size: 80%;">leonard:vm2 bob$ <strong>vm2 register /Users/bob/oddthesis/jboss-cloud/build/appliances/jboss-as5-appliance-1.0.0.Beta2-1.tgz</strong><br />registering jboss-as5-appliance-1.0.0.Beta2-1 as vmi-b175c299b3<br /></pre>
+<p>The <a href='/theses/jboss-cloud/projects/jboss-cloud' title='JBoss-Cloud'>JBoss-Cloud</a> project can generate a VMWare bundle, which we register in VM2:</p>
+<pre style='font-size: 80%;'>leonard:vm2 bob$ <strong>vm2 register /Users/bob/oddthesis/jboss-cloud/build/appliances/jboss-as5-appliance-1.0.0.Beta2-1.tgz</strong><br/>registering jboss-as5-appliance-1.0.0.Beta2-1 as vmi-b175c299b3<br/></pre>
 <p>We can poke around and see the registered images</p>
-<pre style="font-size: 80%;">leonard:vm2 bob$ <strong>vm2 describe-images</strong><br />VMI             Name                                     User         Date<br />----------------------------------------------------------------------------------------------------<br />vmi-7839267fe0  postgis-appliance-1.0.0.Beta2-1          bob          Wed Dec 31 15:08:23 -0500 2008<br />vmi-b175c299b3  jboss-as5-appliance-1.0.0.Beta2-1        bob          Wed Dec 31 16:55:12 -0500 2008<br />----------------------------------------------------------------------------------------------------<br />2 images<br /></pre>
+<pre style='font-size: 80%;'>leonard:vm2 bob$ <strong>vm2 describe-images</strong><br/>VMI             Name                                     User         Date<br/>----------------------------------------------------------------------------------------------------<br/>vmi-7839267fe0  postgis-appliance-1.0.0.Beta2-1          bob          Wed Dec 31 15:08:23 -0500 2008<br/>vmi-b175c299b3  jboss-as5-appliance-1.0.0.Beta2-1        bob          Wed Dec 31 16:55:12 -0500 2008<br/>----------------------------------------------------------------------------------------------------<br/>2 images<br/></pre>
 <p>When registered, the image bundle gets stashed away in <strong>~/.vm2/images/</strong> for safe-keeping.</p>
 <p>From there, we can launch instances from the image.&nbsp; The bundle is expanded into a unique directory under <strong>~/.vm2/instances/</strong> for each instance you want to spin up.</p>
 <p>Here we spin up 2 instances of the <strong>jboss-as5-appliance</strong>.</p>
-<pre>leonard:vm2 bob$ <strong>vm2 run-instances vmi-b175c299b3 -n 2</strong><br /></pre>
+<pre>leonard:vm2 bob$ <strong>vm2 run-instances vmi-b175c299b3 -n 2</strong><br/></pre>
 <p>You can review the status of your instances</p>
-<pre style="font-size: 80%;">leonard:vm2 bob$ <strong>vm2 describe-instances</strong><br />Instance ID   VMI             State       IP Address        User                 Created<br />---------------------------------------------------------------------------------------------------------------<br />i-c160b05b43  vmi-b175c299b3  PREPARING   -                 bob                  Wed Dec 31 16:59:42 -0500 2008<br />---------------------------------------------------------------------------------------------------------------<br /></pre>
+<pre style='font-size: 80%;'>leonard:vm2 bob$ <strong>vm2 describe-instances</strong><br/>Instance ID   VMI             State       IP Address        User                 Created<br/>---------------------------------------------------------------------------------------------------------------<br/>i-c160b05b43  vmi-b175c299b3  PREPARING   -                 bob                  Wed Dec 31 16:59:42 -0500 2008<br/>---------------------------------------------------------------------------------------------------------------<br/></pre>
 <p>It'll go through the the following states</p>
 <ul>
 <li><strong>PREPARING</strong> as it expands the image bundle for the instance</li>
@@ -28,10 +28,10 @@ layout: post
 <li><strong>STOPPED</strong> when it's not actually running</li>
 </ul>
 <p>Once they're running, <strong>vm2 describe</strong> will show you their addresses:</p>
-<pre style="font-size: 80%;">leonard:vm2 bob$ <strong>vm2 describe-instances</strong><br />Instance ID   VMI             State       IP Address        User                 Created<br />---------------------------------------------------------------------------------------------------------------<br />i-c160b05b43  vmi-b175c299b3  RUNNING     192.168.237.153   bob                  Wed Dec 31 16:59:42 -0500 2008<br />i-d864f89097  vmi-b175c299b3  RUNNING     192.168.237.152   bob                  Wed Dec 31 17:00:33 -0500 2008<br />---------------------------------------------------------------------------------------------------------------<br /></pre>
+<pre style='font-size: 80%;'>leonard:vm2 bob$ <strong>vm2 describe-instances</strong><br/>Instance ID   VMI             State       IP Address        User                 Created<br/>---------------------------------------------------------------------------------------------------------------<br/>i-c160b05b43  vmi-b175c299b3  RUNNING     192.168.237.153   bob                  Wed Dec 31 16:59:42 -0500 2008<br/>i-d864f89097  vmi-b175c299b3  RUNNING     192.168.237.152   bob                  Wed Dec 31 17:00:33 -0500 2008<br/>---------------------------------------------------------------------------------------------------------------<br/></pre>
 <p>At this point, the guest images require <strong>open-vm-tools</strong> and a special RPM called <strong>vm2-support</strong> that is available in the <strong>jboss-cloud</strong> project.&nbsp; Thankfully, all of the JBoss-Cloud images automatically include both.&nbsp; Gee whiz.</p>
 <p>It all operates on the local filesystem, and is not multi-user safe.&nbsp; I also need to master some fork/exec Zen, to make it less blockfull.&nbsp; It also assumes root's password is "thincrust" since I'm using the Thincrust tooling to create these images.</p>
 <p>In addition to the EC2-alike commands of <strong>run-instances</strong> and <strong>terminate-instances</strong>, there's <strong>shutdown-instances</strong> which allow you to shutdown but retain the image for future use with <strong>start-instances</strong>.</p>
 <p>Boot user-data gets injected into <strong>/etc/vm2-user-data.conf</strong> at this point.&nbsp; I may try to add an EC2-alike magic metadata webserver, but I think the direct file inject will play friendly enough with Puppet for now.</p>
 <h3>Get it</h3>
-<p>You can track VM2 from the <a title="VM2 Git Repository" href="http://github.com/bobmcwhirter/vm2/tree/master">bobmcwhirter/vm2 GitHub repository</a>.</p>
+<p>You can track VM2 from the <a href='http://github.com/bobmcwhirter/vm2/tree/master' title='VM2 Git Repository'>bobmcwhirter/vm2 GitHub repository</a>.</p>

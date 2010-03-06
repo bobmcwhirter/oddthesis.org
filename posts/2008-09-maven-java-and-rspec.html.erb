@@ -5,7 +5,7 @@ date: 2008-9-18
 layout: post
 ---
 <p>Since I&#8217;ve been back on the job, writing Java code lately, that means I&#8217;ve been testing Java code lately.</p>
-<p>After living in the land of Ruby with <a title="RSpec" href="http://rspec.info/">RSpec</a>, thinking about JUnit did not excite me.  Thankfully I found the <a title="rspec-maven-plugin" href="http://svn.codehaus.org/mojo/trunk/sandbox/rspec-maven-plugin/">rspec-maven-plugin</a>, which integrates straight into the maven test process.</p>
+<p>After living in the land of Ruby with <a href='http://rspec.info/' title='RSpec'>RSpec</a>, thinking about JUnit did not excite me.  Thankfully I found the <a href='http://svn.codehaus.org/mojo/trunk/sandbox/rspec-maven-plugin/' title='rspec-maven-plugin'>rspec-maven-plugin</a>, which integrates straight into the maven test process.</p>
 <p>I like rspec because it removes a whole lot of the cruft involved in writing tests.  When I return to the specs weeks later, I can still read the intent.  So often, with JUnit tests named with cryptic method names, it&#8217;s difficult to ascertain exactly what&#8217;s intended to be tested.</p>
 <p>The beta-4 plugin on the repository is based on jruby-1.1.2, but in SVN I&#8217;ve updated it to support 1.1.4.  I think there&#8217;s still some more improvements to be made, such as respecting <strong>maven.test.skip</strong> and getting rid of the need for <strong>JRUBY_HOME</strong> pointing to a full installation. (Note: I did not write this plugin, I&#8217;ve just started contributing to it).</p>
 <p>After a little configuration of the plugin in your pom.xml&#8230;</p>

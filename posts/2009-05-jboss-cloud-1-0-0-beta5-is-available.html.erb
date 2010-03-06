@@ -5,31 +5,31 @@ date: 2009-5-31
 layout: post
 ---
 <h3>What&rsquo;s JBoss Cloud?</h3>
-<p>JBoss Cloud is a set of images to run your applications in a JBoss AS 5 cluster in a cloud. It&rsquo;s virtualization platform independent; you can run it on your favorite platform: Xen, KVM, VMware and of course on Amazon EC! We&rsquo;re providing a full set of images for both architectures (i386 and x86_64).<br /><br />After start, JBoss Cloud will automatically form a JBoss AS 5 cluster. <strong>No user interaction is required!</strong> Just deploy your application and start using it.</p>
+<p>JBoss Cloud is a set of images to run your applications in a JBoss AS 5 cluster in a cloud. It&rsquo;s virtualization platform independent; you can run it on your favorite platform: Xen, KVM, VMware and of course on Amazon EC! We&rsquo;re providing a full set of images for both architectures (i386 and x86_64).<br/><br/>After start, JBoss Cloud will automatically form a JBoss AS 5 cluster. <strong>No user interaction is required!</strong> Just deploy your application and start using it.</p>
 <h3>New version highlights</h3>
 <p><strong>Management appliance</strong></p>
 <p>We have added a management-appliance. A management appliance is responsible for detecting other running appliances on a network. Actual node list is stored on management appliance. After node discovery is done, management-appliance pushes front-end-appliance address to other nodes. For example if a back-end appliance receives a front-end-appliance address it&rsquo;ll adjust configuration files and start JBoss AS 5 service. Similar other nodes will configure and start their services.</p>
 <p>In case of configuration change, <strong>service will be restarted automatically</strong> with new settings.</p>
 <p>There is no need to start appliances in a specific order, just launch them, they will recognize each other after start. Be sure to launch <strong>management-appliance</strong> too!</p>
 <p><strong>On EC2 you must</strong> provide your EC2 credentials as user data to launch management-appliance. If you don't do this it'll boot, but it will not be able to discover other appliances. To inject credentials encode with <strong>base64</strong> following string:</p>
-<pre>access_key: YOUR_ACCESS_KEY<br />secret_access_key: YOUR_SECRET_ACCESS_KEY<br /></pre>
-<p>To encode this string you can use for example <a href="http://www.opinionatedgeek.com/dotnet/tools/Base64Encode/">this page</a>. Passing this data to management-appliance i really simple. If you're using <a href="https://console.aws.amazon.com/ec2/home">Amazon AWS Management Console</a>, just click <em>Show advanced options</em> and put your encoded string into <em>User Data</em> field.</p>
-<p><a href="http://farm3.static.flickr.com/2480/3581565156_9eed60678a_o.png"><img src="http://farm3.static.flickr.com/2480/3581565156_8917e9882e_m.jpg" alt="" width="240" height="157" /></a></p>
+<pre>access_key: YOUR_ACCESS_KEY<br/>secret_access_key: YOUR_SECRET_ACCESS_KEY<br/></pre>
+<p>To encode this string you can use for example <a href='http://www.opinionatedgeek.com/dotnet/tools/Base64Encode/'>this page</a>. Passing this data to management-appliance i really simple. If you're using <a href='https://console.aws.amazon.com/ec2/home'>Amazon AWS Management Console</a>, just click <em>Show advanced options</em> and put your encoded string into <em>User Data</em> field.</p>
+<p><a href='http://farm3.static.flickr.com/2480/3581565156_9eed60678a_o.png'><img src='/images/archive/3581565156_8917e9882e_m.jpg' height='157' alt='' width='240'/></a></p>
 <p>If you're building management appliance from source. Just run:</p>
-<pre><span style="font-family: courier new,monospace;">rake appliance:management-appliance:ec2:run</span></pre>
+<pre><span style='font-family: courier new,monospace;'>rake appliance:management-appliance:ec2:run</span></pre>
 <p>I'll automatically inject appropriate data.</p>
 <p><strong>Full set of images are now available</strong></p>
-<p>Beta5 is the first release with full images stack available for download. Now we provide both, 32 and 64 bit AMIs and packages for other virtualization platforms in both architectures, too. Just <a href="http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta5/">grab them</a> and tell us how it feels.</p>
+<p>Beta5 is the first release with full images stack available for download. Now we provide both, 32 and 64 bit AMIs and packages for other virtualization platforms in both architectures, too. Just <a href='http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta5/'>grab them</a> and tell us how it feels.</p>
 <p><strong>EC2 support improved</strong></p>
 <p>AMIs are now running with newest available kernel. Proper modules are also included.</p>
 <p><strong>Dependency check before building appliance</strong></p>
-<p>For those who want to build own images using <a href="/theses/jboss-cloud/projects/jboss-cloud-support/pages/rake-tasks">rake tasks</a> there is a RPM packages dependency check added. You know if build will succeed before it is started. It&rsquo;ll save some time in case of creating new images. More info on using this feature you can find in my <a href="/posts/2009-05-fancy-new-stuff-in-jboss-cloud">previous post</a>.</p>
+<p>For those who want to build own images using <a href='/theses/jboss-cloud/projects/jboss-cloud-support/pages/rake-tasks'>rake tasks</a> there is a RPM packages dependency check added. You know if build will succeed before it is started. It&rsquo;ll save some time in case of creating new images. More info on using this feature you can find in my <a href='/posts/2009-05-fancy-new-stuff-in-jboss-cloud'>previous post</a>.</p>
 <h3>Upgrades</h3>
 <p>We have also upgraded some packages to newest available versions:</p>
 <ul>
-<li><a href="http://jboss.org/">JBoss AS</a> 5.1.0.GA</li>
-<li><a href="http://www.jboss.org/mod_cluster/">mod_cluster</a> 1.0.0.GA</li>
-<li><a href="http://torquebox.org/">TorqueBox</a> 1.0.0.Beta12</li>
+<li><a href='http://jboss.org/'>JBoss AS</a> 5.1.0.GA</li>
+<li><a href='http://www.jboss.org/mod_cluster/'>mod_cluster</a> 1.0.0.GA</li>
+<li><a href='http://torquebox.org/'>TorqueBox</a> 1.0.0.Beta12</li>
 </ul>
 <h3>Where can I get it?</h3>
 <p>If you're interested in Amazon EC AMIs, just launch these:</p>
@@ -49,8 +49,8 @@ layout: post
 <li>postgis-appliance: <strong><span>ami-e52ec88c</span></strong></li>
 <li>meta-appliance: <strong><span>ami-cb2ec8a2</span></strong></li>
 </ul>
-<p>In case you're using <strong>other virtualization platforms</strong> (eg. VMware or KVM) we are providing a <a href="http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta5/">set of images</a>. Just <a href="http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta5/">grab</a>, unpack and run them!</p>
+<p>In case you're using <strong>other virtualization platforms</strong> (eg. VMware or KVM) we are providing a <a href='http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta5/'>set of images</a>. Just <a href='http://repo.oddthesis.org/releases/jboss-cloud/1.0.0.Beta5/'>grab</a>, unpack and run them!</p>
 <h3>Where can I get some help?</h3>
-<p>We're always (almost) on IRC. Just join <a href="irc://irc.freenode.net/jboss-cloud">#jboss-cloud</a> on freenode! Are you feeling in a mailing list better? No problem, send a blank message to <a href="mailto:jboss-cloud-subscribe@oddthesis.org">jboss-cloud-subscribe@oddthesis.org</a> to subscribe.</p>
+<p>We're always (almost) on IRC. Just join <a href='irc://irc.freenode.net/jboss-cloud'>#jboss-cloud</a> on freenode! Are you feeling in a mailing list better? No problem, send a blank message to <a href='mailto:jboss-cloud-subscribe@oddthesis.org'>jboss-cloud-subscribe@oddthesis.org</a> to subscribe.</p>
 <h3>Where is the documentation?</h3>
-<p>Documentation is as always available on <a href="/theses/jboss-cloud/projects/jboss-cloud/pages/documentation">documentation page</a>.</p>
+<p>Documentation is as always available on <a href='/theses/jboss-cloud/projects/jboss-cloud/pages/documentation'>documentation page</a>.</p>

@@ -4,27 +4,27 @@ author: Bob McWhirter
 date: 2008-12-23
 layout: post
 ---
-<h3>Background on Clustering HTTP<br /></h3>
-<p>JBoss clusters, as we all know.&nbsp; You can fire up a farm of AS5 worker nodes, and they'll find each other (sometimes with the help of a <a title="JGroups Gossip" href="http://www.jgroups.org/user/node71.html#Gossip">Gossip</a> router).&nbsp; They'll share HTTP sessions and such, through the magic of <a title="JBoss Cache" href="http://www.jboss.org/jbosscache/">JBoss Cache</a>.</p>
+<h3>Background on Clustering HTTP<br/></h3>
+<p>JBoss clusters, as we all know.&nbsp; You can fire up a farm of AS5 worker nodes, and they'll find each other (sometimes with the help of a <a href='http://www.jgroups.org/user/node71.html#Gossip' title='JGroups Gossip'>Gossip</a> router).&nbsp; They'll share HTTP sessions and such, through the magic of <a href='http://www.jboss.org/jbosscache/' title='JBoss Cache'>JBoss Cache</a>.</p>
 <p>But then you end up with a farm of distinct HTTP listeners out there, each with their own IP address.&nbsp; So we jam a proxy out front, normally, which dispatches requests to any one of the workers on the farm.</p>
 <p>But then your proxy has to know all about the workers.&nbsp; With many generic solutions, that means maintaing a list of worker nodes.&nbsp; Normally by a human or a ball of bash scripts.</p>
-<p>Let me introduce <a title="JBoss mod_cluster" href="http://www.jboss.org/mod_cluster/">JBoss mod_cluster</a>, though, which goes a long way to making clustering a simple, happy, joyous event.</p>
-<h3>JBoss mod_cluster<br /></h3>
-<p>While <a title="JBoss mod_cluster" href="http://www.jboss.org/mod_cluster/">JBoss mod_cluster</a> has a few different modes of operation, from standalone to HA, using HTTP or AJP to chat with the back-ends, we'll be looking at the top-of-the-line implementation, since I get to play with all the big toys.</p>
-<p>First, as the name implies, mod_cluster is a module for <a title="Apache httpd" href="http://httpd.apache.org/">Apache httpd</a>.&nbsp; In fact, it's a set of modules that work with mod_proxy and mod_proxy_ajp.</p>
+<p>Let me introduce <a href='http://www.jboss.org/mod_cluster/' title='JBoss mod_cluster'>JBoss mod_cluster</a>, though, which goes a long way to making clustering a simple, happy, joyous event.</p>
+<h3>JBoss mod_cluster<br/></h3>
+<p>While <a href='http://www.jboss.org/mod_cluster/' title='JBoss mod_cluster'>JBoss mod_cluster</a> has a few different modes of operation, from standalone to HA, using HTTP or AJP to chat with the back-ends, we'll be looking at the top-of-the-line implementation, since I get to play with all the big toys.</p>
+<p>First, as the name implies, mod_cluster is a module for <a href='http://httpd.apache.org/' title='Apache httpd'>Apache httpd</a>.&nbsp; In fact, it's a set of modules that work with mod_proxy and mod_proxy_ajp.</p>
 <p>The Apache httpd configuration can be super-simple:</p>
-<pre>&lt;VirtualHost *:80&gt;<br />  ServerName test.local.oddthesis.org<br /><br />  ManagerBalancerName mycluster<br />  ServerAdvertise off<br /><br />  &lt;Proxy *&gt;<br />  &lt;/Proxy&gt;<br /><br />&lt;/VirtualHost&gt;<br /></pre>
+<pre>&lt;VirtualHost *:80&gt;<br/>  ServerName test.local.oddthesis.org<br/><br/>  ManagerBalancerName mycluster<br/>  ServerAdvertise off<br/><br/>  &lt;Proxy *&gt;<br/>  &lt;/Proxy&gt;<br/><br/>&lt;/VirtualHost&gt;<br/></pre>
 <p>I turn off proxy server advertising because multicast isn't available to me (see below).</p>
 <p>In the HA mode, mod_cluster takes advantage of the fact that your cluster knows itself.&nbsp; A worker is responsible for providing the entire cluster view to the front-end httpd processes.&nbsp; It also informs the cluster itself of the view of the proxy front-ends.</p>
 <p>Then mod_cluster pipes requests through mod_proxy_ajp dynamically to find their way to a worker.&nbsp; You don't have to maintain worker lists yourself or through bash voodoo any more.&nbsp; The front-end chats AJP with the workers, so things flow efficiently.&nbsp; Add nodes, remove nodes, have nodes crash (never!), and the proxy responds.</p>
-<p><img src="/system/assets/mod_cluster.png" alt="mod_cluster overview" width="292" height="431" /></p>
+<p><img src='/images/archive/mod_cluster.png' height='431' alt='mod_cluster overview' width='292'/></p>
 <p>The source distribution seems to include httpd and a lot of its own dependencies.&nbsp; I was able to compile just the modules which work fine in a stock Fedora-10 spin of apache httpd.&nbsp; I'll be publishing an RPM shortly, also.</p>
 <h3>Multicast</h3>
 <p>Some of the magic involves multicast, which I've decided is a tool of the devil.&nbsp; By default, it seems disabled in VMWare, and is permanently disabled on EC2.&nbsp; So it might as well not exist.</p>
 <p>With mod_cluster, the default is for the proxies to advertise over multicast so that workers can find them initially.&nbsp; This is awesome if your environment supports it. Mine doesn't.</p>
 <p>But the AS5 portion of mod_cluster realizes that sometimes you can't use multicast.&nbsp; So you can provide a list of proxies in the mod-cluster service within AS5.&nbsp; I've decided to go with property substitution and modifying my JBoss boot script to check for <strong>$JBOSS_PROXY_LIST</strong> in <strong>/etc/jboss-as5.conf</strong>.&nbsp; This gets passed on in and consumed at AS5's boot time.&nbsp; Basically:</p>
 <pre>run.sh -Djboss.modcluster.proxyList=$JBOSS_PROXY_LIST</pre>
-<pre>  &lt;!-- Configure this node's communication with the load balancer --&gt;<br />  &lt;bean name="HAModClusterConfig" class="org.jboss.modcluster.config.ha.HAModClusterConfig" mode="On Demand"&gt;<br /><br />    <strong>&lt;!-- Comma separated list of address:port listing the httpd servers<br />         where mod_cluster is running. --&gt;<br />    &lt;property name="proxyList"&gt;${jboss.modcluster.proxyList}&lt;/property&gt;</strong></pre>
+<pre>  &lt;!-- Configure this node's communication with the load balancer --&gt;<br/>  &lt;bean name="HAModClusterConfig" class="org.jboss.modcluster.config.ha.HAModClusterConfig" mode="On Demand"&gt;<br/><br/>    <strong>&lt;!-- Comma separated list of address:port listing the httpd servers<br/>         where mod_cluster is running. --&gt;<br/>    &lt;property name="proxyList"&gt;${jboss.modcluster.proxyList}&lt;/property&gt;</strong></pre>
 <p>In an EC2 environment, my puppet recipe will grab the proxy list from the boot metadata and reset my /etc/jboss-as5.conf appropriately, perhaps.</p>
 <p>You may argue that we've just replaced the maintenance of a worker list with the maintenance of a proxy list.&nbsp; Which is somewhat true.&nbsp; But the proxy list tends to be smaller, more static, and less crashy.&nbsp; Workers tend to grow, shrink and crash more often.&nbsp; And <strong>if you do have multicast available</strong> to you, mod_cluster will sprinkle magic end-to-end, and no list maintenance is required at all.</p>
 <p>Overall, mod_cluster is definitely another useful tool for running Java apps in scalable environments.</p>

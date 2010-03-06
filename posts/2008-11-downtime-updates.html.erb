@@ -6,7 +6,7 @@ layout: post
 ---
 <p>Throughout the day (I've scheduled a daily maintenance window from 9am-5pm US Eastern every day...) this site occasionally will go offline while I update the code behind it.</p>
 <p>Sometimes I'm updating the Rails application that powers it.&nbsp; Sometimes I'm updating the Rails deployer that lights it up.</p>
-<h3>Application Updates<br /></h3>
+<h3>Application Updates<br/></h3>
 <p>In the case of just updating the application, the downtime should last all of 5 seconds while AS redeploys the app atomically after Capistrano has successfully updated the code and such on the server.&nbsp;</p>
 <p>Capistrano checks the code out from the repository (GitHub) into a timestamped directory.&nbsp; It creates a symlink named <strong><em>current</em></strong> pointing to the newly deployed directory of code.&nbsp; It then emits an updated <strong>-rails.yml</strong> deployment descriptor in the JBoss <strong>deploy/</strong> directory.&nbsp; Every few seconds, AS scans the deploy/ directory for updated things to deploy.&nbsp; Seeing the new <strong>-rails.yml</strong>, it first completely undeploys the old application from the old timestamped directory, including any scheduler.&nbsp; Then it deploys the new application from the new timestamped directory.</p>
 <p>We intentionally do not use the <em><strong>current</strong></em> symlink when deploying to AS.&nbsp; If we did, as soon as the symlink was created, the code would be visible to the "old" version of the running Rails application before it gets completely undeployed.&nbsp; This could result in errors if you require model migrations, changes to <strong>config/**</strong> files or have added gems.&nbsp;</p>
@@ -17,5 +17,5 @@ layout: post
 <p>All told, updating both the deployer and the app (including ssh'ing over a very-high-latency satellite connection) takes right about 10 minutes.</p>
 <h3>Bottom Line</h3>
 <p>The update this morning brought about changes to both the deployer and the app.&nbsp;</p>
-<p>The deployer itself now uses <a title="JBoss Microcontainer" href="http://www.jboss.org/jbossmc/">Microcontainer</a> slightly better, thanks to code reviews from <a title="Ales's Blog" href="http://blogs.jboss.com/blog/alesj/">Ales Justin</a> (Mr. Microcontainer).&nbsp;</p>
-<p>And the Atom feed should now include better URLs for links in the entries.&nbsp; Thanks to <a title="Adam's Blog" href="http://www.warski.org/blog/">Adam Warski</a> for noticing and reporting that.</p>
+<p>The deployer itself now uses <a href='http://www.jboss.org/jbossmc/' title='JBoss Microcontainer'>Microcontainer</a> slightly better, thanks to code reviews from <a href='http://blogs.jboss.com/blog/alesj/' title='Ales&apos;s Blog'>Ales Justin</a> (Mr. Microcontainer).&nbsp;</p>
+<p>And the Atom feed should now include better URLs for links in the entries.&nbsp; Thanks to <a href='http://www.warski.org/blog/' title='Adam&apos;s Blog'>Adam Warski</a> for noticing and reporting that.</p>

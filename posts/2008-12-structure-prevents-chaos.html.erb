@@ -4,12 +4,12 @@ author: Bob McWhirter
 date: 2008-12-2
 layout: post
 ---
-<h3>Basics<br /></h3>
+<h3>Basics<br/></h3>
 <p>We can look at a directory structure, and as intelligent humans, recognize patterns.</p>
 <p>Look at a tree such as</p>
-<pre>WEB-INF/<br />    web.xml<br />    lib/<br />        drools.jar<br />    classes/<br />        org/<br />            jboss/</pre>
+<pre>WEB-INF/<br/>    web.xml<br/>    lib/<br/>        drools.jar<br/>    classes/<br/>        org/<br/>            jboss/</pre>
 <p>&nbsp; Or maybe</p>
-<pre>META-INF/<br />    persistence.xml<br />org/<br />    jboss/</pre>
+<pre>META-INF/<br/>    persistence.xml<br/>org/<br/>    jboss/</pre>
 <p>The first looks like a WAR, while the second looks like a plain JAR.</p>
 <p>Once we've identified the type or structure, we know the <strong>meaning</strong> of the parts of the tree.&nbsp; In a WAR, we know that <strong>WEB-INF/</strong> will contain metadata such as <strong>web.xml</strong>.&nbsp; In a JAR, we know that <strong>META-INF/</strong> may contain metadata such as <strong>persistence.xml</strong>.</p>
 <p>We can consider these to be metadata paths that Microcontainer should scan for metadata deployments.</p>
@@ -19,7 +19,7 @@ layout: post
 <p>There's a <strong>JARStructure</strong> deployer that looks for <strong>META-INF/</strong> to identify JARs and a <strong>WARStructure</strong> that looks for an extension of <strong>.war</strong> or the existence of <strong>WEB-INF/</strong> to identify WARs.&nbsp; If the <strong>StructureDeployer</strong> recognizes the candidate, it sets up the metadata paths and classpaths implied by the given structure.&nbsp; Microcontainer then will load up the classes and continue to deploy the items found within the metadata paths.</p>
 <h3>Rails Structure</h3>
 <p>Rails developers are familiar with trees that look like</p>
-<pre>config/<br />    database.yml<br />    environment.rb<br />app/<br />    models/<br />    controllers/<br />    views/<br />lib/</pre>
+<pre>config/<br/>    database.yml<br/>    environment.rb<br/>app/<br/>    models/<br/>    controllers/<br/>    views/<br/>lib/</pre>
 <p>It's apparent to me that <strong>config/</strong> is where configuration information is kept.&nbsp; It's somewhat like a JAR's <strong>META-INF/</strong>.</p>
 <p>By convention, <strong>lib/java/**.jar</strong> is added to a JRuby-on-Rails classpath, to be made available to the application.</p>
 <p>I've created a <strong>RailsStructure</strong> that looks for <strong>config/environment.rb</strong>, and if found, will consider the candidate to be a Rails application.&nbsp; From there it adds <strong>config/</strong> to the metadata path.</p>

@@ -4,14 +4,14 @@ author: Marek Goldmann
 date: 2009-8-11
 layout: post
 ---
-<p>There are <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/bins/27978">many things to do</a>. I'll highlight three major tasks planned for 1.0.0.Beta7. Of course there are also a <a href="http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets?q=tagged%3A%22bug%22+milestone%3A%221.0.0.Beta7%22">few bugs</a> to fix.</p>
+<p>There are <a href='http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets/bins/27978'>many things to do</a>. I'll highlight three major tasks planned for 1.0.0.Beta7. Of course there are also a <a href='http://oddthesis.lighthouseapp.com/projects/19748-jboss-cloud/tickets?q=tagged%3A%22bug%22+milestone%3A%221.0.0.Beta7%22'>few bugs</a> to fix.</p>
 <h3>1. Go fast!</h3>
 <p>We know, time is precious. We don't want to take your time and therefore we'll speed up our appliances! The goal is to start an instance under 5 minutes on EC2 and &lt;20 sec on local virtualization platform. On EC2 this takes so much time, because every time you hit <em>Launch</em> button an image is copied from bucket to host and unbundled, we cannot speed up this process, unfortunately :(</p>
 <p>We're optimizing boot process. That means: disabling everything we don't need and removing all unnecessary packages.</p>
 <h3>2. JOPR monitoring</h3>
-<p><a href="http://jboss.org/jopr">JOPR</a> is a JBoss monitoring and management tool (probably better word would be <em>platform</em>). We'll use it to monitor all services we have in the cloud, including: JBoss AS and httpd. System level services like sshd we'll monitor too!</p>
-<p>You can define alerts, see resource usage history, customize your dashboard, etc. Just <a href="http://jboss.org/jopr/JONmonitoring.html">take a look</a>! More screenshots are available on <a href="http://jboss.org/jopr">project website</a>.</p>
+<p><a href='http://jboss.org/jopr'>JOPR</a> is a JBoss monitoring and management tool (probably better word would be <em>platform</em>). We'll use it to monitor all services we have in the cloud, including: JBoss AS and httpd. System level services like sshd we'll monitor too!</p>
+<p>You can define alerts, see resource usage history, customize your dashboard, etc. Just <a href='http://jboss.org/jopr/JONmonitoring.html'>take a look</a>! More screenshots are available on <a href='http://jboss.org/jopr'>project website</a>.</p>
 <h3>3. Amazon CloudFront support</h3>
-<p><a href="http://aws.amazon.com/cloudfront/">Amazon CloudFront</a> will enable faster image  delivery. Every downloaded file is cached on servers around the world, this will dramatically increase your download speed (I hope!).</p>
+<p><a href='http://aws.amazon.com/cloudfront/'>Amazon CloudFront</a> will enable faster image  delivery. Every downloaded file is cached on servers around the world, this will dramatically increase your download speed (I hope!).</p>
 <h3>When it will be released?</h3>
-<p>The plan is to release Beta7 by the end of next week. Follow us on <a href="http://twitter.com/jbosscloud">Twitter</a> or take a seat in our <a href="irc://irc.freenode.net/jboss-cloud">IRC room</a> to know everything from first hand!</p>
+<p>The plan is to release Beta7 by the end of next week. Follow us on <a href='http://twitter.com/jbosscloud'>Twitter</a> or take a seat in our <a href='irc://irc.freenode.net/jboss-cloud'>IRC room</a> to know everything from first hand!</p>
