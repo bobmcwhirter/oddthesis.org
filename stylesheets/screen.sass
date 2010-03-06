@@ -15,6 +15,8 @@ form.bp
 
 #container
   +container
+  a
+    :text-decoration none
 
   #header
     :border-bottom 1px solid black
@@ -39,14 +41,20 @@ form.bp
 
 .post
   :margin-bottom 2em
+  :padding-bottom 1em
+  :border-bottom 1px solid #999
   .title
     :font-size 240%
+    :font-weight bold
   .details
     :margin-bottom 1em
     .author, .date
       :display inline
     .author
       :font-weight bold
+  .content
+    a
+      :text-decoration underline
 
 .pagination-links
   :margin-top 1em
